@@ -35,13 +35,26 @@ namespace Cad2Revit.Helpers
             KetQuaDocCAD ketQuaCad,
             Document doc = null)
         {
-            if (phanTich?.DanhSachDiemCot == null ||
-                phanTich.DanhSachDiemCot.Count < 2)
-            {
-                return null;
-            }
+            LuoiTrucKetCau luoi = null;
 
-            LuoiTrucKetCau luoi = TaoLuoiTuCot(phanTich.DanhSachDiemCot);
+            // 1) Nếu có đủ điểm cột thì dùng cách cũ (tạo lưới từ cột)
+            if (phanTich?.DanhSachDiemCot != null &&
+                phanTich.DanhSachDiemCot.Count >= 2)
+            {
+                luoi = TaoLuoiTuCot(phanTich.DanhSachDiemCot);
+            }
+            else
+            {
+                // 2) Không đủ cột -> thử tạo lưới từ các đường CAD (nếu có)
+                if (ketQuaCad != null && ketQuaCad.DanhSachDuong != null && ketQuaCad.DanhSachDuong.Count > 0)
+                {
+                    luoi = TaoLuoiTuDuongCad(ketQuaCad);
+                }
+
+                // Nếu vẫn không có lưới thì trả về null
+                if (luoi == null)
+                    return null;
+            }
             SnapCotVeLuoi(phanTich.DanhSachDiemCot, luoi);
 
             double tamX = (luoi.MinX + luoi.MaxX) * 0.5;
@@ -209,6 +222,96 @@ namespace Cad2Revit.Helpers
             {
                 TrucX = GomTruc(cot.Select(c => c.X), tolFeet),
                 TrucY = GomTruc(cot.Select(c => c.Y), tolFeet)
+            };
+
+            if (luoi.TrucX.Count > 0)
+            {
+                luoi.MinX = luoi.TrucX.First();
+                luoi.MaxX = luoi.TrucX.Last();
+            }
+
+            if (luoi.TrucY.Count > 0)
+            {
+                luoi.MinY = luoi.TrucY.First();
+                luoi.MaxY = luoi.TrucY.Last();
+            }
+
+            return luoi;
+        }
+
+        /// <summary>
+        /// Tạo `LuoiTrucKetCau` từ các đường CAD (lines) theo thuật toán: lọc theo layer,
+        /// phân loại hướng (X/Y), gom các đường gần nhau, sắp xếp và trả về lưới.
+        /// Nếu `gridLayerNames` là null, sẽ tìm các layer có chứa từ `GRID` hoặc `LUOI`.
+        /// </summary>
+        public static LuoiTrucKetCau TaoLuoiTuDuongCad(
+            KetQuaDocCAD ketQuaCad,
+            List<string> gridLayerNames = null,
+            double tolAlignMm = 50,
+            double tolMergeMm = TolGomTrucMm,
+            double marginGridMm = MarginGridMm)
+        {
+            if (ketQuaCad == null || ketQuaCad.DanhSachDuong == null || ketQuaCad.DanhSachDuong.Count == 0)
+                return null;
+
+            double tolAlignFeet = UnitHelper.MmSangFeet(tolAlignMm);
+            double tolMergeFeet = UnitHelper.MmSangFeet(tolMergeMm);
+
+            var xs = new List<double>();
+            var ys = new List<double>();
+
+            foreach (var d in ketQuaCad.DanhSachDuong)
+            {
+                if (d == null || d.DiemDau == null || d.DiemCuoi == null)
+                    continue;
+
+                string layer = (d.TenLayer ?? "").ToUpper();
+
+                bool layerMatch = false;
+                if (gridLayerNames != null && gridLayerNames.Count > 0)
+                {
+                    foreach (var name in gridLayerNames)
+                    {
+                        if (string.IsNullOrWhiteSpace(name))
+                            continue;
+                        if (layer.Contains(name.ToUpper()))
+                        {
+                            layerMatch = true;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (layer.Contains("GRID") || layer.Contains("LUOI") || layer.Contains("TRUC"))
+                        layerMatch = true;
+                }
+
+                if (!layerMatch)
+                    continue;
+
+                double dx = Math.Abs(d.DiemDau.X - d.DiemCuoi.X);
+                double dy = Math.Abs(d.DiemDau.Y - d.DiemCuoi.Y);
+
+                if (dx < tolAlignFeet)
+                {
+                    double x = (d.DiemDau.X + d.DiemCuoi.X) * 0.5;
+                    xs.Add(x);
+                }
+                else if (dy < tolAlignFeet)
+                {
+                    double y = (d.DiemDau.Y + d.DiemCuoi.Y) * 0.5;
+                    ys.Add(y);
+                }
+            }
+
+            if (xs.Count == 0 && ys.Count == 0)
+                return null;
+
+            var luoi = new LuoiTrucKetCau
+            {
+                TrucX = GomTruc(xs, tolMergeFeet),
+                TrucY = GomTruc(ys, tolMergeFeet)
             };
 
             if (luoi.TrucX.Count > 0)
