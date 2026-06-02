@@ -850,7 +850,7 @@ namespace Cad2Revit.Converter
                     Grid grid = Grid.Create(_doc, line);
                     if (grid != null)
                     {
-                        DatTenGrid(grid, "" + (i + 1));
+                        DatTenGrid(grid, DatTenTrucChu(i)); // X direction → letters
                         KhoaPhamViGrid(grid, line);
                         _gridDaTao.Add(grid);
                         soTruc++;
@@ -879,7 +879,7 @@ namespace Cad2Revit.Converter
                     {
                         DatTenGrid(
                             grid,
-                            "" + DatTenTrucChu(j));
+                            "" + (j + 1)); // Y direction → numbers
                         KhoaPhamViGrid(grid, line);
                         _gridDaTao.Add(grid);
                         soTruc++;
