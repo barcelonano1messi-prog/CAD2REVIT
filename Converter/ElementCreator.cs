@@ -673,6 +673,14 @@ namespace Cad2Revit.Converter
             ThuPhamViGridVaLevel(levels, levelMai);
         }
 
+        private View3D TimView3D()
+        {
+            return new FilteredElementCollector(_doc)
+                .OfClass(typeof(View3D))
+                .Cast<View3D>()
+                .FirstOrDefault(v => !v.IsTemplate && v.ViewType == ViewType.ThreeD);
+        }
+
         private void ThuPhamViGridVaLevel(
             List<Level> levels,
             Level levelMai)
