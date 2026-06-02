@@ -1,5 +1,6 @@
 using Autodesk.Revit.DB;
 using Cad2Revit.Helpers;
+using System;
 using System.Collections.Generic;
 
 namespace Cad2Revit.Models
@@ -32,7 +33,6 @@ namespace Cad2Revit.Models
         }
     }
 
-    /// <summary>Một vị trí cột đã gộp từ geometry CAD (tâm + tiết diện).</summary>
     public class DiemCot
     {
         public double X { get; set; }
@@ -44,7 +44,6 @@ namespace Cad2Revit.Models
         public XYZ Tam => new XYZ(X, Y, 0);
     }
 
-    /// <summary>Dầm đã khử trùng (một đường trục).</summary>
     public class DuongDam
     {
         public XYZ DiemDau { get; set; }
@@ -80,17 +79,10 @@ namespace Cad2Revit.Models
         public double DamCaoMm { get; set; }
         public double BeDaySanMm { get; set; }
 
-        public List<DiemCot> DanhSachDiemCot { get; set; } =
-            new List<DiemCot>();
-
-        public List<DuongDam> DanhSachDuongDam { get; set; } =
-            new List<DuongDam>();
-
-        public List<VungSan> DanhSachVungSan { get; set; } =
-            new List<VungSan>();
-
+        public List<DiemCot> DanhSachDiemCot { get; set; } = new List<DiemCot>();
+        public List<DuongDam> DanhSachDuongDam { get; set; } = new List<DuongDam>();
+        public List<VungSan> DanhSachVungSan { get; set; } = new List<VungSan>();
         public LuoiTrucKetCau LuoiTruc { get; set; }
-
         public string TomTat { get; set; }
     }
 
@@ -104,16 +96,69 @@ namespace Cad2Revit.Models
         public double GocY { get; set; }
         public double DoiTatX { get; set; }
         public double DoiTatY { get; set; }
-
         public ElementId CadImportId { get; set; }
-
         public bool DaDichCadVeGoc { get; set; }
 
         public KetQuaDocCAD()
         {
             DanhSachDuong = new List<CadLine>();
             ThanhCong = false;
-            ThongBaoLoi = "";
+            ThongBaoLoi = string.Empty;
         }
+    }
+
+    public class ConversionSettings
+    {
+        public double ChieuCaoTang1Mm { get; set; } = 3300;
+        public double ChieuCaoTangDienHinhMm { get; set; } = 3300;
+        public double BeDaySanMm { get; set; } = 150;
+        public int SoTang { get; set; } = 4;
+        public double DamRongMm { get; set; } = 200;
+        public double DamCaoMm { get; set; } = 500;
+        public bool UuTienKichThuocDamTuUi { get; set; } = true;
+        public bool BoQuaSanTangTret { get; set; } = true;
+        public bool TaoSanMai { get; set; } = true;
+        public bool ConvertWalls { get; set; } = true;
+        public bool ConvertColumns { get; set; } = true;
+        public bool ConvertBeams { get; set; } = true;
+        public bool ConvertFloors { get; set; } = true;
+        public bool SuDungLevelRevitCoSan { get; set; } = false;
+        public bool SuDungGridRevitCoSan { get; set; } = false;
+        public bool TaoLevelMoiKhiThieu { get; set; } = true;
+
+        public int SoTamSanDuKien
+        {
+            get
+            {
+                if (!BoQuaSanTangTret)
+                    return SoTang + (TaoSanMai ? 1 : 0);
+
+                int tam = Math.Max(0, SoTang - 1);
+                if (TaoSanMai && SoTang > 1)
+                    tam += 1;
+
+                return tam;
+            }
+        }
+
+        public double LayChieuCaoTang(int chiSoTang)
+        {
+            if (chiSoTang <= 0)
+                return ChieuCaoTang1Mm;
+
+            return ChieuCaoTangDienHinhMm;
+        }
+    }
+
+    public class LayerMapItem
+    {
+        public string LayerName { get; set; }
+        public string CategoryName { get; set; }
+    }
+
+    public class LayerMapping
+    {
+        public string LayerName { get; set; }
+        public LoaiCauKien Loai { get; set; }
     }
 }

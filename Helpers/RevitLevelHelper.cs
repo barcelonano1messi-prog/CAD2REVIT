@@ -139,14 +139,6 @@ namespace Cad2Revit.Helpers
             return null;
         }
 
-        public static Level TimLevelMauTheoSoTang(Document doc, int soTang)
-        {
-            if (doc == null || soTang < 1)
-                return null;
-
-            return TimLevelTheoTenTang(LayLevelRevitCoSan(doc), soTang);
-        }
-
         private static List<Level> LayLevelRevitCoSan(Document doc)
         {
             return new FilteredElementCollector(doc)

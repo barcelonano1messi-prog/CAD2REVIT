@@ -45,10 +45,6 @@ namespace Cad2Revit.Converter
             {
                 CadCleanupHelper.XoaTatCaGrid(_doc);       // Xóa tất cả Grid nếu ta sẽ tạo grid CAD2Revit mới
             }
-            CadCleanupHelper.XoaTatCaCauKien(_doc);        // Xóa tất cả phần tử cấu kiện
-            // Xóa các Level mặc định (Level 1 / Level 2) nếu có — người dùng yêu cầu xóa ngay cả khi dùng template
-            CadCleanupHelper.XoaLevelMacDinh(_doc);
-            // Lưu ý: Level không xóa vì protected - sẽ tạo mới hoặc sử dụng lại
 
             // BƯỚC 1: ChuẩnHoá tọa độ
             CadCoordinateHelper.ChuanHoaVeGocKienTruc(
@@ -65,11 +61,6 @@ namespace Cad2Revit.Converter
                 _doc,
                 _phanTich.LuoiTruc,
                 _ketQuaCAD?.DanhSachDuong);
-
-            if (!_caiDat.SuDungLevelRevitCoSan)
-            {
-                CadCleanupHelper.XoaTatCaLevelKhongPhaiCad2Revit(_doc);
-            }
 
             if (_caiDat.SuDungLevelRevitCoSan)
             {
@@ -96,8 +87,15 @@ namespace Cad2Revit.Converter
             if (_caiDat.TaoSanMai)
                 ChuanBiLevelMai();
 
-            // BƯỚC 2+3: TẠO LƯỚI TRỤC VÀ LƯỚI SÀN TRƯỚC
-            TaoLuoiVaSanTruoc();
+            // BƯỚC 2+3: TẠO LƯỚI TRỤC VÀ SÀN TRƯỚC
+            var gridFloorBuilder = new GridFloorBuilder(
+                _doc,
+                _caiDat,
+                _phanTich,
+                ketQuaCAD,
+                _cacLevel,
+                _levelMai);
+            gridFloorBuilder.CreateGridAndFloors();
 
             int soTuong = 0;
             int soCot = 0;
@@ -729,230 +727,6 @@ namespace Cad2Revit.Converter
 
         }
 
-        private void KhoaPhamViGrid(Grid grid, Line line)
-        {
-            if (grid == null || line == null ||
-                _cacLevel == null || _cacLevel.Count == 0)
-            {
-                return;
-            }
-
-            try
-            {
-                double zDuoi = _cacLevel[0].Elevation;
-                double zTren = _levelMai != null
-                    ? _levelMai.Elevation
-                    : _cacLevel[_cacLevel.Count - 1].Elevation;
-
-                grid.SetVerticalExtents(zDuoi, zTren);
-
-                var views = new FilteredElementCollector(_doc)
-                    .OfClass(typeof(View))
-                    .Cast<View>()
-                    .Where(v => !v.IsTemplate && !v.IsAssemblyView)
-                    .ToList();
-
-                foreach (View view in views)
-                {
-                    try
-                    {
-                        // Chỉ set extent cho End0 để nhãn lưới hiển thị một đầu (thường là đầu dưới).
-                        grid.SetDatumExtentType(
-                            DatumEnds.End0,
-                            view,
-                            DatumExtentType.Model);
-                        grid.SetCurveInView(
-                            DatumExtentType.Model,
-                            view,
-                            line);
-                    }
-                    catch
-                    {
-                        // bỏ qua những view không hỗ trợ hoặc lỗi set curve
-                    }
-                }
-            }
-            catch
-            {
-                // bỏ qua
-            }
-        }
-
-        private View3D TimView3D()
-        {
-            return new FilteredElementCollector(_doc)
-                .OfClass(typeof(View3D))
-                .Cast<View3D>()
-                .FirstOrDefault(v =>
-                    !v.IsTemplate &&
-                    !v.IsAssemblyView);
-        }
-
-        private void TaoLuoiVaSanTruoc()
-        {
-            if (!_caiDat.SuDungGridRevitCoSan)
-                TaoLuoiRevit();
-
-            if (_caiDat.ConvertFloors)
-            {
-                for (int tang = 0; tang < _cacLevel.Count; tang++)
-                {
-                    Level level = _cacLevel[tang];
-
-                    if (NenTaoSanChoTang(tang))
-                    {
-                        TaoSanChoTang(tang, level);
-                    }
-                }
-
-                if (_caiDat.TaoSanMai)
-                    TaoSanMai();
-            }
-        }
-
-        private void TaoLuoiRevit()
-        {
-            // Đảm bảo xóa toàn bộ grid cũ / mặc định trước khi tạo lại
-            CadCleanupHelper.XoaTatCaGrid(_doc);
-
-            LuoiTrucKetCau luoi = _phanTich.LuoiTruc;
-            if (luoi == null ||
-                luoi.TrucX.Count < 2 ||
-                luoi.TrucY.Count < 2)
-            {
-                return;
-            }
-
-            double z = _cacLevel != null && _cacLevel.Count > 0
-                ? _cacLevel[0].Elevation
-                : 0;
-
-            double margin = UnitHelper.MmSangFeet(4500);
-            double minY = luoi.MinY - margin;
-            double maxY = luoi.MaxY + margin;
-            double minX = luoi.MinX - margin;
-            double maxX = luoi.MaxX + margin;
-
-            int soTruc = 0;
-
-            for (int i = 0; i < luoi.TrucX.Count; i++)
-            {
-                double x = luoi.TrucX[i];
-                try
-                {
-                    Line line = Line.CreateBound(
-                        new XYZ(x, minY, z),
-                        new XYZ(x, maxY, z));
-
-                    if (DaCoGridTrung(x, minY, x, maxY, z))
-                        continue;
-
-                    Grid grid = Grid.Create(_doc, line);
-                    if (grid != null)
-                    {
-                        DatTenGrid(grid, DatTenTrucChu(i)); // X direction → letters
-                        KhoaPhamViGrid(grid, line);
-                        _gridDaTao.Add(grid);
-                        soTruc++;
-                    }
-                }
-                catch
-                {
-                    // bỏ qua trục trùng
-                }
-            }
-
-            for (int j = 0; j < luoi.TrucY.Count; j++)
-            {
-                double y = luoi.TrucY[j];
-                try
-                {
-                    Line line = Line.CreateBound(
-                        new XYZ(minX, y, z),
-                        new XYZ(maxX, y, z));
-
-                    if (DaCoGridTrung(minX, y, maxX, y, z))
-                        continue;
-
-                    Grid grid = Grid.Create(_doc, line);
-                    if (grid != null)
-                    {
-                        DatTenGrid(
-                            grid,
-                            "" + (j + 1)); // Y direction → numbers
-                        KhoaPhamViGrid(grid, line);
-                        _gridDaTao.Add(grid);
-                        soTruc++;
-                    }
-                }
-                catch
-                {
-                    // bỏ qua
-                }
-            }
-        }
-
-        private static string DatTenTrucChu(int chiSo)
-        {
-            if (chiSo < 26)
-                return ((char)('A' + chiSo)).ToString();
-
-            return "A" + ((char)('A' + chiSo - 26)).ToString();
-        }
-
-        private bool DaCoGridTrung(
-            double x1,
-            double y1,
-            double x2,
-            double y2,
-            double z)
-        {
-            double tol = UnitHelper.MmSangFeet(80);
-            Line mau = Line.CreateBound(
-                new XYZ(x1, y1, z),
-                new XYZ(x2, y2, z));
-
-            foreach (Grid g in new FilteredElementCollector(_doc)
-                .OfClass(typeof(Grid))
-                .Cast<Grid>())
-            {
-                if (g.Name == null ||
-                    g.Name.IndexOf("CAD2Revit", StringComparison.OrdinalIgnoreCase) < 0)
-                {
-                    continue;
-                }
-
-                Curve c = g.Curve;
-                if (c == null)
-                    continue;
-
-                XYZ a = c.GetEndPoint(0);
-                XYZ b = c.GetEndPoint(1);
-
-                if (a.DistanceTo(mau.GetEndPoint(0)) < tol &&
-                    b.DistanceTo(mau.GetEndPoint(1)) < tol)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static void DatTenGrid(Grid grid, string ten)
-        {
-            if (grid == null)
-                return;
-
-            try
-            {
-                grid.Name = ten;
-            }
-            catch
-            {
-                grid.Name = ten + "-" + grid.Id.Value;
-            }
-        }
 
         private bool TaoTuong(
             CadLine duong,

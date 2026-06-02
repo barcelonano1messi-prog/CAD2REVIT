@@ -57,6 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Converter\CadReader.cs" />
     <Compile Include="Converter\ElementCreator.cs" />
+    <Compile Include="Converter\GridFloorBuilder.cs" />
     <Compile Include="Converter\LayerMapper.cs" />
     <Compile Include="Converter\CadGeometryAnalyzer.cs" />
     <Compile Include="Converter\FloorContourBuilder.cs" />
@@ -69,19 +70,17 @@
     <Compile Include="Helpers\RevitLevelHelper.cs" />
     <Compile Include="Helpers\RevitGridHelper.cs" />
     <Compile Include="Helpers\CadDimensionHelper.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="ViewModels\LayerMapItem.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="Models\ConversionSettings.cs" />
+    <Compile Include="Converter\Models.cs" />
+    <Compile Include="Converter\ICadConversionService.cs" />
+    <Compile Include="Converter\CadConversionService.cs" />
     <Compile Include="Views\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\App.cs" />
-    <Compile Include="Core\Command.cs" />
-    <Compile Include="Models\CadElement.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="Command.cs" />
     <Compile Include="Helpers\UnitHelper.cs" />
   </ItemGroup>
   <ItemGroup>
