@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Autodesk.Revit.DB;
@@ -13,7 +12,7 @@ using RDB = Autodesk.Revit.DB;
 
 namespace Cad2Revit.Views
 {
-    public partial class MainForm : Form
+    public partial class MainForm : System.Windows.Forms.Form
     {
         private readonly UIApplication _uiApp;
         private readonly RDB.Document _doc;
@@ -85,13 +84,13 @@ namespace Cad2Revit.Views
             if (cadImport != null)
             {
                 lblCadStatus.Text = "Đã có file CAD import — nhấn Đọc CAD rồi Chuyển đổi.";
-                lblCadStatus.ForeColor = Color.Green;
+                lblCadStatus.ForeColor = System.Drawing.Color.Green;
                 _canReadCad = true;
             }
             else
             {
                 lblCadStatus.Text = "Chưa import CAD. Dùng Insert → Import CAD trước.";
-                lblCadStatus.ForeColor = Color.Red;
+                lblCadStatus.ForeColor = System.Drawing.Color.Red;
                 _canReadCad = false;
             }
 
@@ -114,7 +113,7 @@ namespace Cad2Revit.Views
                 if (!_conversionService.ReadCad(out string error))
                 {
                     lblCadStatus.Text = error ?? "Không đọc được CAD.";
-                    lblCadStatus.ForeColor = Color.Red;
+                    lblCadStatus.ForeColor = System.Drawing.Color.Red;
                     _canConvert = false;
                     _canApplyLayer = false;
                     UpdateStatistics();
@@ -135,7 +134,7 @@ namespace Cad2Revit.Views
                 UpdateButtonStates();
 
                 lblCadStatus.Text = "Đã đọc CAD thành công. Có thể áp dụng layer hoặc chuyển đổi.";
-                lblCadStatus.ForeColor = Color.Green;
+                lblCadStatus.ForeColor = System.Drawing.Color.Green;
             }
             catch (Exception ex)
             {
