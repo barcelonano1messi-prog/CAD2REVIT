@@ -920,7 +920,13 @@ namespace Cad2Revit.Converter
                         if (loopTrong != null)
                             loops.Add(loopTrong);
                     }
-                    levelId);         
+                }
+
+                Floor san = Floor.Create(
+                    _doc,
+                    loops,
+                    loaiSan.Id,
+                    levelId);
 
                 if (san == null)
                     return false;
