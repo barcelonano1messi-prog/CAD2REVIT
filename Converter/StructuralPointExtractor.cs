@@ -101,12 +101,14 @@ namespace Cad2Revit.Converter
 
             double tolFeet = UnitHelper.MmSangFeet(KhoangDamKepMm);
             var xoa = new bool[ds.Count];
+            var ketQua = new List<DuongDam>();
 
             for (int i = 0; i < ds.Count; i++)
             {
                 if (xoa[i])
                     continue;
 
+                bool daGop = false;
                 for (int j = i + 1; j < ds.Count; j++)
                 {
                     if (xoa[j])
@@ -131,21 +133,53 @@ namespace Cad2Revit.Converter
                     if (tiLe < 0.45)
                         continue;
 
-                    if (ds[i].ChieuDaiNhipMm >= ds[j].ChieuDaiNhipMm)
-                        xoa[j] = true;
-                    else
+                    DuongDam trungDiem = TaoDamTuCapSongSong(ds[i], ds[j]);
+                    if (trungDiem != null)
+                    {
+                        ketQua.Add(trungDiem);
                         xoa[i] = true;
+                        xoa[j] = true;
+                        daGop = true;
+                        break;
+                    }
                 }
-            }
 
-            var ketQua = new List<DuongDam>();
-            for (int k = 0; k < ds.Count; k++)
-            {
-                if (!xoa[k])
-                    ketQua.Add(ds[k]);
+                if (!daGop && !xoa[i])
+                    ketQua.Add(ds[i]);
             }
 
             return ketQua;
+        }
+
+        private static DuongDam TaoDamTuCapSongSong(
+            DuongDam a,
+            DuongDam b)
+        {
+            if (a == null || b == null)
+                return null;
+
+            if (!CungHuongDam(a.DiemDau, a.DiemCuoi, b))
+                return null;
+
+            var dd = new DuongDam
+            {
+                DiemDau = new XYZ(
+                    (a.DiemDau.X + b.DiemDau.X) * 0.5,
+                    (a.DiemDau.Y + b.DiemDau.Y) * 0.5,
+                    0),
+                DiemCuoi = new XYZ(
+                    (a.DiemCuoi.X + b.DiemCuoi.X) * 0.5,
+                    (a.DiemCuoi.Y + b.DiemCuoi.Y) * 0.5,
+                    0),
+                RongMm = (a.RongMm + b.RongMm) * 0.5,
+                CaoMm = (a.CaoMm + b.CaoMm) * 0.5,
+                TenLayer = a.TenLayer ?? b.TenLayer
+            };
+
+            if (dd.DiemDau.IsAlmostEqualTo(dd.DiemCuoi))
+                return null;
+
+            return dd;
         }
 
         private static double KhoangCachHaiDuongSongSong(
