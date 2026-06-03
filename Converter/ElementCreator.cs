@@ -1020,7 +1020,9 @@ namespace Cad2Revit.Converter
 
         private static void LamThangDuong(ref XYZ p1, ref XYZ p2)
         {
-            double tol = UnitHelper.MmSangFeet(20);
+            // Giữ nguyên hướng dầm/tường gần với bản vẽ hơn.
+            // Chỉ cố định đường thẳng nếu thực sự nằm ngang hoặc dọc gần như tuyệt đối.
+            double tol = UnitHelper.MmSangFeet(1);
             double dx = Math.Abs(p2.X - p1.X);
             double dy = Math.Abs(p2.Y - p1.Y);
 

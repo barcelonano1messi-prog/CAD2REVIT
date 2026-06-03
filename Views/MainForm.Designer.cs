@@ -68,7 +68,7 @@ namespace Cad2Revit.Views
             // 
             this.lblCadStatus.Location = new System.Drawing.Point(12, 9);
             this.lblCadStatus.Name = "lblCadStatus";
-            this.lblCadStatus.Size = new System.Drawing.Size(756, 20);
+            this.lblCadStatus.Size = new System.Drawing.Size(816, 20);
             this.lblCadStatus.TabIndex = 0;
             this.lblCadStatus.Text = "Đang kiểm tra...";
             // 
@@ -94,7 +94,7 @@ namespace Cad2Revit.Views
             this.grpSettings.Controls.Add(this.lblChieuCaoTang1);
             this.grpSettings.Location = new System.Drawing.Point(12, 35);
             this.grpSettings.Name = "grpSettings";
-            this.grpSettings.Size = new System.Drawing.Size(370, 216);
+            this.grpSettings.Size = new System.Drawing.Size(390, 230);
             this.grpSettings.TabIndex = 1;
             this.grpSettings.TabStop = false;
             this.grpSettings.Text = "Thông số nhập tay";
@@ -257,9 +257,9 @@ namespace Cad2Revit.Views
             this.grpElements.Controls.Add(this.chkBeams);
             this.grpElements.Controls.Add(this.chkColumns);
             this.grpElements.Controls.Add(this.chkWalls);
-            this.grpElements.Location = new System.Drawing.Point(394, 35);
+            this.grpElements.Location = new System.Drawing.Point(412, 35);
             this.grpElements.Name = "grpElements";
-            this.grpElements.Size = new System.Drawing.Size(374, 178);
+            this.grpElements.Size = new System.Drawing.Size(416, 190);
             this.grpElements.TabIndex = 2;
             this.grpElements.TabStop = false;
             this.grpElements.Text = "Tạo cấu kiện";
@@ -316,9 +316,9 @@ namespace Cad2Revit.Views
             // 
             this.grpLayerMap.Controls.Add(this.gridLayer);
             this.grpLayerMap.Controls.Add(this.btnApDungLayer);
-            this.grpLayerMap.Location = new System.Drawing.Point(12, 245);
+            this.grpLayerMap.Location = new System.Drawing.Point(12, 275);
             this.grpLayerMap.Name = "grpLayerMap";
-            this.grpLayerMap.Size = new System.Drawing.Size(756, 188);
+            this.grpLayerMap.Size = new System.Drawing.Size(816, 220);
             this.grpLayerMap.TabIndex = 3;
             this.grpLayerMap.TabStop = false;
             this.grpLayerMap.Text = "Layer CAD";
@@ -334,7 +334,7 @@ namespace Cad2Revit.Views
             this.gridLayer.Location = new System.Drawing.Point(8, 58);
             this.gridLayer.Name = "gridLayer";
             this.gridLayer.RowHeadersVisible = false;
-            this.gridLayer.Size = new System.Drawing.Size(738, 118);
+            this.gridLayer.Size = new System.Drawing.Size(800, 142);
             this.gridLayer.TabIndex = 2;
             // 
             // colTenLayer
@@ -377,9 +377,9 @@ namespace Cad2Revit.Views
             this.grpStats.Controls.Add(this.lblStatLblCol);
             this.grpStats.Controls.Add(this.lblStatWall);
             this.grpStats.Controls.Add(this.lblStatLblWall);
-            this.grpStats.Location = new System.Drawing.Point(12, 445);
+            this.grpStats.Location = new System.Drawing.Point(12, 505);
             this.grpStats.Name = "grpStats";
-            this.grpStats.Size = new System.Drawing.Size(756, 46);
+            this.grpStats.Size = new System.Drawing.Size(816, 46);
             this.grpStats.TabIndex = 4;
             this.grpStats.TabStop = false;
             this.grpStats.Text = "Thống kê";
@@ -470,7 +470,7 @@ namespace Cad2Revit.Views
             this.btnReadCad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReadCad.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnReadCad.ForeColor = System.Drawing.Color.White;
-            this.btnReadCad.Location = new System.Drawing.Point(12, 502);
+            this.btnReadCad.Location = new System.Drawing.Point(12, 565);
             this.btnReadCad.Name = "btnReadCad";
             this.btnReadCad.Size = new System.Drawing.Size(110, 34);
             this.btnReadCad.TabIndex = 5;
@@ -485,7 +485,7 @@ namespace Cad2Revit.Views
             this.btnConvert.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnConvert.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnConvert.ForeColor = System.Drawing.Color.White;
-            this.btnConvert.Location = new System.Drawing.Point(134, 502);
+            this.btnConvert.Location = new System.Drawing.Point(134, 565);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(190, 34);
             this.btnConvert.TabIndex = 6;
@@ -496,7 +496,7 @@ namespace Cad2Revit.Views
             // btnClose
             // 
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClose.Location = new System.Drawing.Point(704, 502);
+            this.btnClose.Location = new System.Drawing.Point(760, 565);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(64, 34);
             this.btnClose.TabIndex = 8;
@@ -508,7 +508,7 @@ namespace Cad2Revit.Views
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 552);
+            this.ClientSize = new System.Drawing.Size(840, 620);
             this.Controls.Add(this.lblCadStatus);
             this.Controls.Add(this.grpSettings);
             this.Controls.Add(this.grpElements);
@@ -518,6 +518,8 @@ namespace Cad2Revit.Views
             this.Controls.Add(this.btnConvert);
             this.Controls.Add(this.btnClose);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.MinimumSize = new System.Drawing.Size(860, 660);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
