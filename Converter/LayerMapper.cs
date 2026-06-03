@@ -59,6 +59,15 @@ namespace Cad2Revit.Converter
             "AFLOR"
         };
 
+        private static readonly string[] _tuKhoaBoQua =
+        {
+            "OPEN",
+            "OPENING",
+            "OPENNING",
+            "HOLE",
+            "VOID"
+        };
+
         /// <summary>
         /// User thêm mapping custom
         /// </summary>
@@ -123,6 +132,9 @@ namespace Cad2Revit.Converter
 
             if (CoTuKhoa(ten, _tuKhoaCot))
                 return LoaiCauKien.Cot;
+
+            if (CoTuKhoa(ten, _tuKhoaBoQua))
+                return LoaiCauKien.KhongXacDinh;
 
             if (CoTuKhoa(ten, _tuKhoaDam))
                 return LoaiCauKien.Dam;
