@@ -190,6 +190,7 @@ namespace Cad2Revit.Views
             this.chkUseExistingLevels.TabIndex = 8;
             this.chkUseExistingLevels.Text = "Dùng Level Revit có sẵn";
             this.chkUseExistingLevels.UseVisualStyleBackColor = true;
+            this.chkUseExistingLevels.Visible = false;
             // 
             // lblSoTang
             // 

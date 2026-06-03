@@ -74,7 +74,7 @@ namespace Cad2Revit.Converter
                 .OfClass(typeof(ImportInstance))
                 .WhereElementIsNotElementType()
                 .Cast<ImportInstance>()
-                .OrderByDescending(i => i.Id.IntegerValue)
+                .OrderByDescending(i => i.Id.Value)
                 .ToList();
 
             if (imports.Count == 0)

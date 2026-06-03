@@ -451,18 +451,18 @@ namespace Cad2Revit.Converter
             if (_phanTich.DanhSachVungSan != null &&
                 _phanTich.DanhSachVungSan.Count > 0)
             {
-                XYZ tam = new XYZ(
+                XYZ tamTrongVung = new XYZ(
                     (dd.DiemDau.X + dd.DiemCuoi.X) * 0.5,
                     (dd.DiemDau.Y + dd.DiemCuoi.Y) * 0.5,
                     0);
 
-                double tol = UnitHelper.MmSangFeet(50);
+                double dungSaiTrongVung = UnitHelper.MmSangFeet(50);
                 foreach (VungSan vung in _phanTich.DanhSachVungSan)
                 {
                     if (vung?.DuongVien == null || vung.DuongVien.Count < 3)
                         continue;
 
-                    if (PointInPolygon(tam, vung.DuongVien, tol))
+                    if (PointInPolygon(tamTrongVung, vung.DuongVien, dungSaiTrongVung))
                         return true;
                 }
 
