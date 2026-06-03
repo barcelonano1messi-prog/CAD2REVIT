@@ -37,6 +37,7 @@ namespace Cad2Revit.Views
 
             InitializeLayerGrid();
             SetDefaults();
+            InitializeSettingsChangeHandlers();
             UpdateCadImportStatus();
         }
 
@@ -104,6 +105,24 @@ namespace Cad2Revit.Views
             btnReadCad.Enabled = _canReadCad;
             btnApDungLayer.Enabled = _canApplyLayer;
             btnConvert.Enabled = _canConvert;
+        }
+
+        private void InitializeSettingsChangeHandlers()
+        {
+            txtChieuCaoTang1.TextChanged += SettingsInput_TextChanged;
+            txtChieuCaoTangDienHinh.TextChanged += SettingsInput_TextChanged;
+            txtBeDaySan.TextChanged += SettingsInput_TextChanged;
+            txtDamRong.TextChanged += SettingsInput_TextChanged;
+            txtDamCao.TextChanged += SettingsInput_TextChanged;
+            txtSoTang.TextChanged += SettingsInput_TextChanged;
+        }
+
+        private void SettingsInput_TextChanged(object sender, EventArgs e)
+        {
+            if (_ketQuaCAD == null || !_canConvert)
+                return;
+
+            RefreshAnalysis();
         }
 
         private void btnReadCad_Click(object sender, EventArgs e)
@@ -281,7 +300,13 @@ namespace Cad2Revit.Views
             int soSan = 0;
             int soKhac = 0;
 
-            if (_ketQuaCAD != null)
+            if (_phanTich != null)
+            {
+                soCot = _phanTich.DanhSachDiemCot?.Count ?? 0;
+                soDam = _phanTich.DanhSachDuongDam?.Count ?? 0;
+                soSan = _phanTich.DanhSachVungSan?.Count ?? 0;
+            }
+            else if (_ketQuaCAD != null)
             {
                 foreach (CadLine duong in _ketQuaCAD.DanhSachDuong)
                 {

@@ -88,10 +88,7 @@ namespace Cad2Revit.Services
             if (CadResult == null)
                 return "Lỗi: chưa đọc CAD.";
 
-            if (AnalysisResult == null)
-            {
-                Analyse(settings);
-            }
+            Analyse(settings);
 
             var creator = new ElementCreator(_doc, settings, AnalysisResult, CadResult);
             return creator.TaoTatCaCauKien(CadResult);

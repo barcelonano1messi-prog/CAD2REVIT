@@ -227,19 +227,46 @@ namespace Cad2Revit.Converter
         private static List<DuongDam> LocTrungDam(List<DuongDam> ds)
         {
             var ketQua = new List<DuongDam>();
-            var daCo = new HashSet<string>();
+            double tolFeet = UnitHelper.MmSangFeet(20);
 
             foreach (DuongDam d in ds.OrderByDescending(x => x.ChieuDaiNhipMm))
             {
-                string key = MaDam(d);
-                if (daCo.Contains(key))
-                    continue;
-
-                daCo.Add(key);
-                ketQua.Add(d);
+                bool trung = ketQua.Any(existing => DuongDamGiongNhau(existing, d, tolFeet));
+                if (!trung)
+                    ketQua.Add(d);
             }
 
             return ketQua;
+        }
+
+        private static bool DuongDamGiongNhau(
+            DuongDam a,
+            DuongDam b,
+            double tolFeet)
+        {
+            if (a == null || b == null)
+                return false;
+
+            if (!CungHuongDam(a.DiemDau, a.DiemCuoi, b))
+                return false;
+
+            if (Math.Abs(a.RongMm - b.RongMm) > 20 ||
+                Math.Abs(a.CaoMm - b.CaoMm) > 20)
+            {
+                return false;
+            }
+
+            double d1 = KhoangCachDiemLenDuong(b.DiemDau, a.DiemDau, a.DiemCuoi);
+            double d2 = KhoangCachDiemLenDuong(b.DiemCuoi, a.DiemDau, a.DiemCuoi);
+            if (d1 > tolFeet || d2 > tolFeet)
+                return false;
+
+            double d3 = KhoangCachDiemLenDuong(a.DiemDau, b.DiemDau, b.DiemCuoi);
+            double d4 = KhoangCachDiemLenDuong(a.DiemCuoi, b.DiemDau, b.DiemCuoi);
+            if (d3 > tolFeet || d4 > tolFeet)
+                return false;
+
+            return true;
         }
 
         private static double KhoangCachDiemLenDuong(
