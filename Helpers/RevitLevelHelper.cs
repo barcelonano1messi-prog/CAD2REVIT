@@ -28,6 +28,11 @@ namespace Cad2Revit.Helpers
             Level tang1 = TimLevelTheoTenTang(levelsRevit, 1);
             double elevationBase = tang1?.Elevation ?? 0;
 
+            if (tang1 != null)
+            {
+                CapNhatCaoDoLevelCoSan(levelsRevit, caiDat, elevationBase, tolFeet);
+            }
+
             for (int i = 0; i < soTang; i++)
             {
                 double caoDoMucTieu = TinhCaoDoMucTieu(
@@ -293,18 +298,58 @@ namespace Cad2Revit.Helpers
             if (coSan != null)
                 return coSan.Elevation;
 
+            return TinhCaoDoNhap(
+                caiDat,
+                chiSoTang,
+                elevationBase);
+        }
+
+        private static double TinhCaoDoNhap(
+            ConversionSettings caiDat,
+            int chiSoTang,
+            double elevationBase)
+        {
             double caoDo = elevationBase;
 
             for (int j = 0; j < chiSoTang; j++)
             {
-                if (j > 0 || chiSoTang > 0)
-                {
-                    caoDo += UnitHelper.MmSangFeet(
-                        caiDat.LayChieuCaoTang(j));
-                }
+                caoDo += UnitHelper.MmSangFeet(
+                    caiDat.LayChieuCaoTang(j));
             }
 
             return caoDo;
+        }
+
+        private static void CapNhatCaoDoLevelCoSan(
+            List<Level> levels,
+            ConversionSettings caiDat,
+            double elevationBase,
+            double tolFeet)
+        {
+            if (levels == null || levels.Count == 0)
+                return;
+
+            int soTang = caiDat.SoTang < 1 ? 1 : caiDat.SoTang;
+
+            for (int i = 0; i < soTang; i++)
+            {
+                Level level = TimLevelTheoTenTang(levels, i + 1);
+                if (level == null)
+                    continue;
+
+                double mucTieu = TinhCaoDoNhap(caiDat, i, elevationBase);
+                if (Math.Abs(level.Elevation - mucTieu) > tolFeet)
+                {
+                    try
+                    {
+                        level.Elevation = mucTieu;
+                    }
+                    catch
+                    {
+                        // Nếu không hỗ trợ gán trực tiếp, bỏ qua.
+                    }
+                }
+            }
         }
 
         private static Level TimLevelTheoCaoDo(

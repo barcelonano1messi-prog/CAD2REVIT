@@ -60,6 +60,7 @@ namespace Cad2Revit.Views
             txtDamRong.Text = "200";
             txtDamCao.Text = "500";
             txtSoTang.Text = "4";
+            chkUseExistingLevels.Checked = false;
 
             chkWalls.Checked = true;
             chkColumns.Checked = true;
@@ -359,7 +360,7 @@ namespace Cad2Revit.Views
                 UuTienKichThuocDamTuUi = true,
                 SoTang = soTang,
                 BoQuaSanTangTret = true,
-                SuDungLevelRevitCoSan = true,
+                SuDungLevelRevitCoSan = chkUseExistingLevels.Checked,
                 SuDungGridRevitCoSan = false,
                 TaoLevelMoiKhiThieu = true,
                 TaoSanMai = true,

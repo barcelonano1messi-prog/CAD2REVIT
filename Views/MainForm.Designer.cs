@@ -27,6 +27,7 @@ namespace Cad2Revit.Views
             this.lblBeDaySan = new System.Windows.Forms.Label();
             this.lblMm2b = new System.Windows.Forms.Label();
             this.txtSoTang = new System.Windows.Forms.TextBox();
+            this.chkUseExistingLevels = new System.Windows.Forms.CheckBox();
             this.lblSoTang = new System.Windows.Forms.Label();
             this.lblMm2 = new System.Windows.Forms.Label();
             this.txtChieuCaoTangDienHinh = new System.Windows.Forms.TextBox();
@@ -83,6 +84,7 @@ namespace Cad2Revit.Views
             this.grpSettings.Controls.Add(this.lblBeDaySan);
             this.grpSettings.Controls.Add(this.lblMm2b);
             this.grpSettings.Controls.Add(this.txtSoTang);
+            this.grpSettings.Controls.Add(this.chkUseExistingLevels);
             this.grpSettings.Controls.Add(this.lblSoTang);
             this.grpSettings.Controls.Add(this.lblMm2);
             this.grpSettings.Controls.Add(this.txtChieuCaoTangDienHinh);
@@ -92,7 +94,7 @@ namespace Cad2Revit.Views
             this.grpSettings.Controls.Add(this.lblChieuCaoTang1);
             this.grpSettings.Location = new System.Drawing.Point(12, 35);
             this.grpSettings.Name = "grpSettings";
-            this.grpSettings.Size = new System.Drawing.Size(370, 178);
+            this.grpSettings.Size = new System.Drawing.Size(370, 216);
             this.grpSettings.TabIndex = 1;
             this.grpSettings.TabStop = false;
             this.grpSettings.Text = "Thông số nhập tay";
@@ -100,7 +102,7 @@ namespace Cad2Revit.Views
             // lblMm6
             // 
             this.lblMm6.AutoSize = true;
-            this.lblMm6.Location = new System.Drawing.Point(241, 106);
+            this.lblMm6.Location = new System.Drawing.Point(241, 136);
             this.lblMm6.Name = "lblMm6";
             this.lblMm6.Size = new System.Drawing.Size(25, 13);
             this.lblMm6.TabIndex = 16;
@@ -108,7 +110,7 @@ namespace Cad2Revit.Views
             // 
             // txtDamCao
             // 
-            this.txtDamCao.Location = new System.Drawing.Point(193, 103);
+            this.txtDamCao.Location = new System.Drawing.Point(193, 133);
             this.txtDamCao.Name = "txtDamCao";
             this.txtDamCao.Size = new System.Drawing.Size(45, 22);
             this.txtDamCao.TabIndex = 15;
@@ -116,7 +118,7 @@ namespace Cad2Revit.Views
             // lblXDam
             // 
             this.lblXDam.AutoSize = true;
-            this.lblXDam.Location = new System.Drawing.Point(178, 106);
+            this.lblXDam.Location = new System.Drawing.Point(178, 136);
             this.lblXDam.Name = "lblXDam";
             this.lblXDam.Size = new System.Drawing.Size(15, 13);
             this.lblXDam.TabIndex = 14;
@@ -124,7 +126,7 @@ namespace Cad2Revit.Views
             // 
             // txtDamRong
             // 
-            this.txtDamRong.Location = new System.Drawing.Point(130, 103);
+            this.txtDamRong.Location = new System.Drawing.Point(130, 133);
             this.txtDamRong.Name = "txtDamRong";
             this.txtDamRong.Size = new System.Drawing.Size(45, 22);
             this.txtDamRong.TabIndex = 13;
@@ -132,7 +134,7 @@ namespace Cad2Revit.Views
             // lblDamSize
             // 
             this.lblDamSize.AutoSize = true;
-            this.lblDamSize.Location = new System.Drawing.Point(8, 106);
+            this.lblDamSize.Location = new System.Drawing.Point(8, 136);
             this.lblDamSize.Name = "lblDamSize";
             this.lblDamSize.Size = new System.Drawing.Size(99, 13);
             this.lblDamSize.TabIndex = 12;
@@ -141,7 +143,7 @@ namespace Cad2Revit.Views
             // lblMm3
             // 
             this.lblMm3.AutoSize = true;
-            this.lblMm3.Location = new System.Drawing.Point(183, 78);
+            this.lblMm3.Location = new System.Drawing.Point(183, 106);
             this.lblMm3.Name = "lblMm3";
             this.lblMm3.Size = new System.Drawing.Size(25, 13);
             this.lblMm3.TabIndex = 11;
@@ -149,7 +151,7 @@ namespace Cad2Revit.Views
             // 
             // txtBeDaySan
             // 
-            this.txtBeDaySan.Location = new System.Drawing.Point(130, 75);
+            this.txtBeDaySan.Location = new System.Drawing.Point(130, 103);
             this.txtBeDaySan.Name = "txtBeDaySan";
             this.txtBeDaySan.Size = new System.Drawing.Size(50, 22);
             this.txtBeDaySan.TabIndex = 10;
@@ -157,7 +159,7 @@ namespace Cad2Revit.Views
             // lblBeDaySan
             // 
             this.lblBeDaySan.AutoSize = true;
-            this.lblBeDaySan.Location = new System.Drawing.Point(8, 78);
+            this.lblBeDaySan.Location = new System.Drawing.Point(8, 106);
             this.lblBeDaySan.Name = "lblBeDaySan";
             this.lblBeDaySan.Size = new System.Drawing.Size(67, 13);
             this.lblBeDaySan.TabIndex = 9;
@@ -178,6 +180,16 @@ namespace Cad2Revit.Views
             this.txtSoTang.Name = "txtSoTang";
             this.txtSoTang.Size = new System.Drawing.Size(50, 22);
             this.txtSoTang.TabIndex = 7;
+            // 
+            // chkUseExistingLevels
+            // 
+            this.chkUseExistingLevels.AutoSize = true;
+            this.chkUseExistingLevels.Location = new System.Drawing.Point(130, 76);
+            this.chkUseExistingLevels.Name = "chkUseExistingLevels";
+            this.chkUseExistingLevels.Size = new System.Drawing.Size(170, 17);
+            this.chkUseExistingLevels.TabIndex = 8;
+            this.chkUseExistingLevels.Text = "Dùng Level Revit có sẵn";
+            this.chkUseExistingLevels.UseVisualStyleBackColor = true;
             // 
             // lblSoTang
             // 
@@ -535,6 +547,7 @@ namespace Cad2Revit.Views
         private System.Windows.Forms.Label lblMm2;
         private System.Windows.Forms.Label lblSoTang;
         private System.Windows.Forms.TextBox txtSoTang;
+        private System.Windows.Forms.CheckBox chkUseExistingLevels;
         private System.Windows.Forms.Label lblMm2b;
         private System.Windows.Forms.Label lblBeDaySan;
         private System.Windows.Forms.TextBox txtBeDaySan;

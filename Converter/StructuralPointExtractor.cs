@@ -91,14 +91,9 @@ namespace Cad2Revit.Converter
                     });
                 }
             }
-
-            // Không gộp nhiều nhịp — dầm theo lưới (TaoDamTheoLuoi) tách từng ô giữa cột.
             return LoaiBoDamSongSongTrung(LocTrungDam(doan));
         }
 
-        /// <summary>
-        /// Bỏ dầm kép song song (hai đường mép dầm trên CAD).
-        /// </summary>
         private static List<DuongDam> LoaiBoDamSongSongTrung(List<DuongDam> ds)
         {
             if (ds.Count < 2)
