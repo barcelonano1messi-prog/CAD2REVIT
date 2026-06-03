@@ -115,7 +115,7 @@ namespace Cad2Revit.Models
         public int SoTang { get; set; } = 4;
         public double DamRongMm { get; set; } = 200;
         public double DamCaoMm { get; set; } = 500;
-        public bool UuTienKichThuocDamTuUi { get; set; } = true;
+        public bool UuTienKichThuocDamTuUi { get; set; } = false;
         public bool BoQuaSanTangTret { get; set; } = true;
         public bool TaoSanMai { get; set; } = true;
         public bool ConvertWalls { get; set; } = true;

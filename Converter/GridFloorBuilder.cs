@@ -137,18 +137,49 @@ namespace Cad2Revit.Converter
 
         private void CreateFloorForLevel(int tang, Level level)
         {
-            List<XYZ> boundary = GetFloorBoundaryForLevel(tang);
-            if (boundary == null || boundary.Count < 3)
+            var boundaries = GetFloorBoundariesForLevel(tang);
+            if (boundaries == null || boundaries.Count == 0)
                 return;
 
-            string key = tang + "_" + ComputeAreaKey(boundary);
-            if (_createdFloorKeys.Contains(key))
-                return;
-
-            if (TryCreateFloor(boundary, level.Elevation, level.Id, false, _phanTich.LuoiTruc?.LoThung))
+            foreach (List<XYZ> boundary in boundaries)
             {
-                _createdFloorKeys.Add(key);
+                if (boundary == null || boundary.Count < 3)
+                    continue;
+
+                string key = tang + "_" + ComputeAreaKey(boundary);
+                if (_createdFloorKeys.Contains(key))
+                    continue;
+
+                if (TryCreateFloor(boundary, level.Elevation, level.Id, false, _phanTich.LuoiTruc?.LoThung))
+                {
+                    _createdFloorKeys.Add(key);
+                }
             }
+        }
+
+        private List<List<XYZ>> GetFloorBoundariesForLevel(int tang)
+        {
+            if (_phanTich.DanhSachVungSan != null &&
+                _phanTich.DanhSachVungSan.Count > 0)
+            {
+                return _phanTich.DanhSachVungSan
+                    .Where(v => v.DuongVien != null && v.DuongVien.Count >= 3)
+                    .Select(v => v.DuongVien)
+                    .ToList();
+            }
+
+            if (_phanTich.LuoiTruc != null)
+            {
+                List<XYZ> luoiBoundary = StructuralGridSystem.LayDuongVienChoTang(
+                    _phanTich.LuoiTruc,
+                    tang,
+                    _levels.Count);
+
+                if (luoiBoundary != null && luoiBoundary.Count >= 3)
+                    return new List<List<XYZ>> { luoiBoundary };
+            }
+
+            return new List<List<XYZ>>();
         }
 
         private void CreateRoofFloor()
@@ -159,7 +190,7 @@ namespace Cad2Revit.Converter
             if (_roofLevel == null)
                 return;
 
-            List<XYZ> boundary = GetFloorBoundaryForLevel(_levels.Count - 1) ?? GetLargestFloorArea();
+            List<XYZ> boundary = GetLargestFloorArea();
             if (boundary == null || boundary.Count < 3)
                 return;
 

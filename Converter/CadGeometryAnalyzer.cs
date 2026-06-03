@@ -48,6 +48,10 @@ namespace Cad2Revit.Converter
             ketQua.DanhSachDuongDam =
                 StructuralPointExtractor.TrichXuatDam(duongDam);
 
+            ketQua.DanhSachVungSan = FloorDuongVienBuilder.TaoVungSanTuDuong(
+                duongSan,
+                ketQua.BeDaySanMm);
+
             CadDimensionHelper.ApDungKichThuocTuBanVe(
                 ketQua,
                 ketQuaCad.DanhSachDuong);
@@ -57,11 +61,6 @@ namespace Cad2Revit.Converter
             ketQua.CotSauMm = kichThuocCot.Item2;
 
             ApDungKichThuocDamNhapTay(ketQua, caiDat);
-
-            // Không tạo vùng sàn từ CAD ở giai đoạn phân tích —
-            // vùng sàn sẽ được xác định từ LuoiTruc (StructuralGridSystem)
-            // khi tạo lưới trục trong bước chuyển đổi sang Revit.
-            ketQua.DanhSachVungSan = new List<VungSan>();
 
             GanBeDayLenDuong(duongTuong, ketQua.BeDayTuongMm);
 
