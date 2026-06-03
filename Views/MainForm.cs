@@ -60,7 +60,6 @@ namespace Cad2Revit.Views
             txtDamRong.Text = "200";
             txtDamCao.Text = "500";
             txtSoTang.Text = "4";
-            chkUseExistingLevels.Checked = true;
 
             chkWalls.Checked = true;
             chkColumns.Checked = true;
