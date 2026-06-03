@@ -91,7 +91,7 @@ namespace Cad2Revit.Converter
                     });
                 }
             }
-            return LoaiBoDamSongSongTrung(LocTrungDam(doan));
+            return LocTrungDam(doan);
         }
 
         private static List<DuongDam> LoaiBoDamSongSongTrung(List<DuongDam> ds)

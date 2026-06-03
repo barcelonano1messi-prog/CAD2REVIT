@@ -161,7 +161,6 @@ namespace Cad2Revit.Views
                     LayerName = item.LayerName,
                     Loai = ConvertNameToType(item.CategoryName)
                 })
-                .Where(mapping => mapping.Loai != LoaiCauKien.KhongXacDinh)
                 .ToList();
 
             _conversionService.ApplyLayerMappings(mappings);

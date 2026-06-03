@@ -39,7 +39,10 @@ namespace Cad2Revit.Services
                 return false;
             }
 
-            LayerNames = _cadReader.DanhSachLayerTimThay?.ToList() ?? new List<string>();
+            LayerNames = _cadReader.DanhSachLayerTimThay?
+                .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x)
+                .ToList() ?? new List<string>();
             return true;
         }
 
