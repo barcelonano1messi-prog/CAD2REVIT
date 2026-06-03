@@ -52,6 +52,9 @@ namespace Cad2Revit.Converter
                 duongSan,
                 ketQua.BeDaySanMm);
 
+            ketQua.DanhSachLoThung = TaoDanhSachLoThungTuLayerMo(
+                ketQuaCad.DanhSachDuong);
+
             CadDimensionHelper.ApDungKichThuocTuBanVe(
                 ketQua,
                 ketQuaCad.DanhSachDuong);
@@ -85,6 +88,21 @@ namespace Cad2Revit.Converter
             k.DamRongMm = 200;
             k.DamCaoMm = 500;
             k.BeDaySanMm = 150;
+        }
+
+        private static List<List<XYZ>> TaoDanhSachLoThungTuLayerMo(
+            List<CadLine> duong)
+        {
+            if (duong == null || duong.Count == 0)
+                return new List<List<XYZ>>();
+
+            var openingLines = duong
+                .Where(d => d != null &&
+                    !string.IsNullOrWhiteSpace(d.TenLayer) &&
+                    LayerMapper.LaLayerBoQua(d.TenLayer))
+                .ToList();
+
+            return FloorDuongVienBuilder.TaoVongMoTuDuong(openingLines);
         }
 
         private static string TaoTomTat(KetQuaPhanTich k)

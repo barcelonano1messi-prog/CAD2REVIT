@@ -68,6 +68,15 @@ namespace Cad2Revit.Converter
             "VOID"
         };
 
+        private static readonly string[] _tuKhoaBoQua =
+        {
+            "OPEN",
+            "OPENING",
+            "OPENNING",
+            "HOLE",
+            "VOID"
+        };
+
         /// <summary>
         /// User thêm mapping custom
         /// </summary>
@@ -136,6 +145,9 @@ namespace Cad2Revit.Converter
             if (CoTuKhoa(ten, _tuKhoaBoQua))
                 return LoaiCauKien.KhongXacDinh;
 
+            if (CoTuKhoa(ten, _tuKhoaBoQua))
+                return LoaiCauKien.KhongXacDinh;
+
             if (CoTuKhoa(ten, _tuKhoaDam))
                 return LoaiCauKien.Dam;
 
@@ -176,12 +188,19 @@ namespace Cad2Revit.Converter
         {
             foreach (string tuKhoa in dsTuKhoa)
             {
-                // Match nguyên token
                 if (tenLayer.Contains(tuKhoa))
                     return true;
             }
 
             return false;
+        }
+
+        public static bool LaLayerBoQua(string tenLayer)
+        {
+            if (string.IsNullOrWhiteSpace(tenLayer))
+                return false;
+
+            return CoTuKhoa(ChuanHoaTenLayer(tenLayer), _tuKhoaBoQua);
         }
     }
 }

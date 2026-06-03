@@ -647,17 +647,13 @@ namespace Cad2Revit.Converter
             if (_sanDaTaoTheoTang.Contains(key))
                 return 0;
 
-            List<XYZ> loThung = tang == 0
-                ? null
-                : _phanTich.LuoiTruc?.LoThung;
-
             if (TaoSanTuDuongVien(
                 DuongVien,
                 _caiDat.BeDaySanMm,
                 level.Elevation,
                 level.Id,
                 false,
-                loThung))
+                _phanTich.DanhSachLoThung))
             {
                 _sanDaTaoTheoTang.Add(key);
                 return 1;
@@ -713,7 +709,7 @@ namespace Cad2Revit.Converter
                 _levelMai.Elevation,
                 _levelMai.Id,
                 true,
-                null))
+                _phanTich.DanhSachLoThung))
             {
                 _sanDaTaoTheoTang.Add(key);
                 return 1;
@@ -896,7 +892,7 @@ namespace Cad2Revit.Converter
             double elevationFeet,
             ElementId levelId,
             bool laSanMai,
-            List<XYZ> loThung = null)
+            List<List<XYZ>> loThungs = null)
         {
             try
             {
@@ -913,17 +909,17 @@ namespace Cad2Revit.Converter
 
                 var loops = new List<CurveLoop> { loopNgoai };
 
-                if (loThung != null && loThung.Count >= 3)
+                if (loThungs != null)
                 {
-                    CurveLoop loopTrong = TaoCurveLoop(loThung, elevationFeet);
-                    if (loopTrong != null)
-                        loops.Add(loopTrong);
-                }
+                    foreach (var loThung in loThungs)
+                    {
+                        if (loThung == null || loThung.Count < 3)
+                            continue;
 
-                Floor san = Floor.Create(
-                    _doc,              
-                    loops,           
-                    loaiSan.Id,        
+                        CurveLoop loopTrong = TaoCurveLoop(loThung, elevationFeet);
+                        if (loopTrong != null)
+                            loops.Add(loopTrong);
+                    }
                     levelId);         
 
                 if (san == null)

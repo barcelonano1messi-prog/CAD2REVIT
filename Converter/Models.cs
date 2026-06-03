@@ -82,6 +82,7 @@ namespace Cad2Revit.Models
         public List<DiemCot> DanhSachDiemCot { get; set; } = new List<DiemCot>();
         public List<DuongDam> DanhSachDuongDam { get; set; } = new List<DuongDam>();
         public List<VungSan> DanhSachVungSan { get; set; } = new List<VungSan>();
+        public List<List<XYZ>> DanhSachLoThung { get; set; } = new List<List<XYZ>>();
         public LuoiTrucKetCau LuoiTruc { get; set; }
         public string TomTat { get; set; }
     }

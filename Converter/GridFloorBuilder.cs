@@ -150,7 +150,7 @@ namespace Cad2Revit.Converter
                 if (_createdFloorKeys.Contains(key))
                     continue;
 
-                if (TryCreateFloor(boundary, level.Elevation, level.Id, false, _phanTich.LuoiTruc?.LoThung))
+                if (TryCreateFloor(boundary, level.Elevation, level.Id, false, _phanTich.DanhSachLoThung))
                 {
                     _createdFloorKeys.Add(key);
                 }
@@ -209,7 +209,7 @@ namespace Cad2Revit.Converter
                 if (_createdFloorKeys.Contains(key))
                     continue;
 
-                if (TryCreateFloor(boundary, _roofLevel.Elevation, _roofLevel.Id, true, null))
+                if (TryCreateFloor(boundary, _roofLevel.Elevation, _roofLevel.Id, true, _phanTich.DanhSachLoThung))
                 {
                     _createdFloorKeys.Add(key);
                 }
@@ -253,7 +253,7 @@ namespace Cad2Revit.Converter
             double elevationFeet,
             ElementId levelId,
             bool isRoof,
-            List<XYZ> opening)
+            List<List<XYZ>> openings)
         {
             try
             {
@@ -271,11 +271,17 @@ namespace Cad2Revit.Converter
                     return false;
 
                 var loops = new List<CurveLoop> { outerLoop };
-                if (opening != null && opening.Count >= 3)
+                if (openings != null)
                 {
-                    CurveLoop innerLoop = CreateCurveLoop(opening, elevationFeet);
-                    if (innerLoop != null)
-                        loops.Add(innerLoop);
+                    foreach (var opening in openings)
+                    {
+                        if (opening == null || opening.Count < 3)
+                            continue;
+
+                        CurveLoop innerLoop = CreateCurveLoop(opening, elevationFeet);
+                        if (innerLoop != null)
+                            loops.Add(innerLoop);
+                    }
                 }
 
                 Floor.Create(_doc, loops, floorType.Id, levelId);

@@ -357,7 +357,7 @@ namespace Cad2Revit.Views
                 BeDaySanMm = beDaySan,
                 DamRongMm = damRong,
                 DamCaoMm = damCao,
-                UuTienKichThuocDamTuUi = false,
+                UuTienKichThuocDamTuUi = true,
                 SoTang = soTang,
                 BoQuaSanTangTret = true,
                 SuDungLevelRevitCoSan = true,

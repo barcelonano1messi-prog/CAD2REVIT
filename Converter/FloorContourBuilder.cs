@@ -101,6 +101,54 @@ namespace Cad2Revit.Converter
                 .ToList();
         }
 
+        public static List<List<XYZ>> TaoVongMoTuDuong(
+            List<CadLine> duongMo)
+        {
+            var ketQua = new List<List<XYZ>>();
+            if (duongMo == null || duongMo.Count == 0)
+                return ketQua;
+
+            double tolFeet = UnitHelper.MmSangFeet(TolMm);
+            var canh = new List<Canh>();
+
+            foreach (CadLine d in duongMo)
+            {
+                if (d == null || UnitHelper.FeetSangMm(d.ChieuDaiFeet()) < 200)
+                    continue;
+
+                canh.Add(new Canh
+                {
+                    Dau = LamPhang(d.DiemDau),
+                    Cuoi = LamPhang(d.DiemCuoi),
+                    Layer = d.TenLayer
+                });
+            }
+
+            var daDung = new HashSet<int>();
+            var loDaCo = new List<List<XYZ>>();
+
+            for (int i = 0; i < canh.Count; i++)
+            {
+                if (daDung.Contains(i))
+                    continue;
+
+                List<XYZ> duongVien = DuyetDuongVien(canh, daDung, i, tolFeet);
+                if (duongVien == null || duongVien.Count < 3)
+                    continue;
+
+                if (DuongVienTrungLap(duongVien, loDaCo, tolFeet))
+                    continue;
+
+                if (DienTichMm2(duongVien) < 10000)
+                    continue;
+
+                loDaCo.Add(duongVien);
+                ketQua.Add(duongVien);
+            }
+
+            return ketQua;
+        }
+
         private static List<XYZ> DuyetDuongVien(
             List<Canh> canh,
             HashSet<int> daDung,
