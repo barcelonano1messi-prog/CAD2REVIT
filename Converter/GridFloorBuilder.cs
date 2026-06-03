@@ -271,9 +271,11 @@ namespace Cad2Revit.Converter
                     return false;
 
                 var loops = new List<CurveLoop> { outerLoop };
-                if (openings != null)
+                var relevantOpenings = GetOpeningsInsideBoundary(openings, boundary);
+
+                if (relevantOpenings != null)
                 {
-                    foreach (var opening in openings)
+                    foreach (var opening in relevantOpenings)
                     {
                         if (opening == null || opening.Count < 3)
                             continue;
@@ -291,6 +293,66 @@ namespace Cad2Revit.Converter
             {
                 return false;
             }
+        }
+
+        private static List<List<XYZ>> GetOpeningsInsideBoundary(
+            List<List<XYZ>> openings,
+            List<XYZ> boundary)
+        {
+            if (openings == null || boundary == null || boundary.Count < 3)
+                return null;
+
+            var result = new List<List<XYZ>>();
+            foreach (var opening in openings)
+            {
+                if (opening == null || opening.Count < 3)
+                    continue;
+
+                if (IsLoopInsideBoundary(opening, boundary))
+                    result.Add(opening);
+            }
+
+            return result.Count > 0 ? result : null;
+        }
+
+        private static bool IsLoopInsideBoundary(
+            List<XYZ> loop,
+            List<XYZ> boundary)
+        {
+            if (loop == null || loop.Count == 0 || boundary == null || boundary.Count < 3)
+                return false;
+
+            // use the centroid of the opening loop to determine if it is inside the parent boundary
+            double centerX = loop.Average(p => p.X);
+            double centerY = loop.Average(p => p.Y);
+            XYZ center = new XYZ(centerX, centerY, 0);
+            return PointInPolygon(center, boundary);
+        }
+
+        private static bool PointInPolygon(XYZ point, List<XYZ> polygon)
+        {
+            if (polygon == null || polygon.Count < 3 || point == null)
+                return false;
+
+            double x = point.X;
+            double y = point.Y;
+            bool inside = false;
+            int n = polygon.Count;
+
+            for (int i = 0, j = n - 1; i < n; j = i++)
+            {
+                double xi = polygon[i].X;
+                double yi = polygon[i].Y;
+                double xj = polygon[j].X;
+                double yj = polygon[j].Y;
+
+                bool intersect = ((yi > y) != (yj > y)) &&
+                    (x < (xj - xi) * (y - yi) / (yj - yi + 1e-12) + xi);
+                if (intersect)
+                    inside = !inside;
+            }
+
+            return inside;
         }
 
         private static CurveLoop CreateCurveLoop(

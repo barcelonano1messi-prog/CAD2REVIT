@@ -125,6 +125,18 @@ namespace Cad2Revit.Helpers
                         v.DuongVien[i] = CongDelta(v.DuongVien[i], delta);
                 }
             }
+
+            if (phanTich.DanhSachLoThung != null)
+            {
+                foreach (var loThung in phanTich.DanhSachLoThung)
+                {
+                    if (loThung == null)
+                        continue;
+
+                    for (int i = 0; i < loThung.Count; i++)
+                        loThung[i] = CongDelta(loThung[i], delta);
+                }
+            }
         }
 
         public static void DichDuongCad(KetQuaDocCAD ketQuaCad, XYZ delta)
