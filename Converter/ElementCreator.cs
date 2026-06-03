@@ -448,6 +448,27 @@ namespace Cad2Revit.Converter
 
         private bool DamThuocPhamViTang(DuongDam dd, int tang)
         {
+            if (_phanTich.DanhSachVungSan != null &&
+                _phanTich.DanhSachVungSan.Count > 0)
+            {
+                XYZ tam = new XYZ(
+                    (dd.DiemDau.X + dd.DiemCuoi.X) * 0.5,
+                    (dd.DiemDau.Y + dd.DiemCuoi.Y) * 0.5,
+                    0);
+
+                double tol = UnitHelper.MmSangFeet(50);
+                foreach (VungSan vung in _phanTich.DanhSachVungSan)
+                {
+                    if (vung?.DuongVien == null || vung.DuongVien.Count < 3)
+                        continue;
+
+                    if (PointInPolygon(tam, vung.DuongVien, tol))
+                        return true;
+                }
+
+                return false;
+            }
+
             List<XYZ> DuongVien = LayDuongVienSanChoTang(tang);
             if (DuongVien == null || DuongVien.Count < 3)
                 return true;
@@ -465,6 +486,65 @@ namespace Cad2Revit.Converter
 
             return tam.X >= minX - tol && tam.X <= maxX + tol &&
                 tam.Y >= minY - tol && tam.Y <= maxY + tol;
+        }
+
+        private static bool PointInPolygon(
+            XYZ point,
+            List<XYZ> polygon,
+            double tolFeet = 0)
+        {
+            if (polygon == null || polygon.Count < 3)
+                return false;
+
+            double x = point.X;
+            double y = point.Y;
+            bool inside = false;
+            int n = polygon.Count;
+
+            for (int i = 0, j = n - 1; i < n; j = i++)
+            {
+                double xi = polygon[i].X;
+                double yi = polygon[i].Y;
+                double xj = polygon[j].X;
+                double yj = polygon[j].Y;
+
+                bool intersect = ((yi > y) != (yj > y)) &&
+                    (x < (xj - xi) * (y - yi) / (yj - yi + 1e-12) + xi);
+                if (intersect)
+                    inside = !inside;
+            }
+
+            if (inside)
+                return true;
+
+            if (tolFeet <= 0)
+                return false;
+
+            for (int i = 0; i < polygon.Count; i++)
+            {
+                XYZ a = polygon[i];
+                XYZ b = polygon[(i + 1) % polygon.Count];
+                if (PointDistanceToSegment(point, a, b) <= tolFeet)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static double PointDistanceToSegment(
+            XYZ p,
+            XYZ a,
+            XYZ b)
+        {
+            XYZ ab = b - a;
+            double abLen2 = ab.DotProduct(ab);
+            if (abLen2 <= 0)
+                return p.DistanceTo(a);
+
+            double t = ((p - a).DotProduct(ab)) / abLen2;
+            t = Math.Max(0, Math.Min(1, t));
+            XYZ proj = a + t * ab;
+            return p.DistanceTo(proj);
         }
 
         private bool TaoDamTheoTang(

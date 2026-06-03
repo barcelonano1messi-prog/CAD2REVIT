@@ -190,17 +190,29 @@ namespace Cad2Revit.Converter
             if (_roofLevel == null)
                 return;
 
-            List<XYZ> boundary = GetLargestFloorArea();
-            if (boundary == null || boundary.Count < 3)
-                return;
-
-            string key = "MAI_" + ComputeAreaKey(boundary);
-            if (_createdFloorKeys.Contains(key))
-                return;
-
-            if (TryCreateFloor(boundary, _roofLevel.Elevation, _roofLevel.Id, true, null))
+            var boundaries = GetFloorBoundariesForLevel(_levels.Count - 1);
+            if (boundaries == null || boundaries.Count == 0)
             {
-                _createdFloorKeys.Add(key);
+                List<XYZ> fallback = GetLargestFloorArea();
+                if (fallback == null || fallback.Count < 3)
+                    return;
+
+                boundaries = new List<List<XYZ>> { fallback };
+            }
+
+            foreach (List<XYZ> boundary in boundaries)
+            {
+                if (boundary == null || boundary.Count < 3)
+                    continue;
+
+                string key = "MAI_" + ComputeAreaKey(boundary);
+                if (_createdFloorKeys.Contains(key))
+                    continue;
+
+                if (TryCreateFloor(boundary, _roofLevel.Elevation, _roofLevel.Id, true, null))
+                {
+                    _createdFloorKeys.Add(key);
+                }
             }
         }
 

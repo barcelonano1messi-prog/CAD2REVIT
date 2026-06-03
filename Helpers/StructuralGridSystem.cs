@@ -72,7 +72,7 @@ namespace Cad2Revit.Helpers
                 phanTich.DanhSachDiemCot,
                 phanTich.SoTang);
 
-            TaoDamTheoLuoi(luoi, phanTich);
+            // Beam creation depends on CAD data only; do not create beams automatically from grid.
             SnapCotVeLuoi(phanTich.DanhSachDiemCot, luoi);
 
             if (doc != null)
