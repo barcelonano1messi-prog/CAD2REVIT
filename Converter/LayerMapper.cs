@@ -68,15 +68,6 @@ namespace Cad2Revit.Converter
             "VOID"
         };
 
-        private static readonly string[] _tuKhoaBoQua =
-        {
-            "OPEN",
-            "OPENING",
-            "OPENNING",
-            "HOLE",
-            "VOID"
-        };
-
         /// <summary>
         /// User thêm mapping custom
         /// </summary>
