@@ -47,20 +47,17 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  A[Start tầng] --> B[Lấy level dưới, level trên]
+  A[Start tầng] --> B[Nhận thông tin cột]
   B --> C{ConvertColumns && có điểm cột?}
   C -- No --> Z[Skip]
   C -- Yes --> D[Lấy điểm cột theo tầng]
   D --> E[For mỗi điểm cột]
-  E --> F[Tạo FamilyInstance cột tại level dưới]
-  F --> G{Có level trên?}
-  G -- Yes --> H[Set FAMILY_TOP_LEVEL_PARAM = levelTren.Id]
-  G -- No --> I[Set top offset bằng chiều cao tầng]
-  H --> J[Set kích thước và vật liệu]
-  I --> J
-  J --> K[Đánh dấu cột đã tạo]
-  K --> L[Next cột]
-  L --> M[Hoàn thành tầng]
+  E --> F[Tạo FamilyInstance cột]
+  F --> G[Áp dụng chiều cao và kích thước]
+  G --> H[Set kích thước và vật liệu]
+  H --> I[Đánh dấu cột đã tạo]
+  I --> J[Next cột]
+  J --> K[Hoàn thành tầng]
 ```
 
 ## 2.1.3 Lưu đồ thuật toán tạo dầm
@@ -74,13 +71,12 @@ flowchart TD
   D -- Yes --> F{Đã tạo dầm này chưa?}
   F -- Yes --> E
   F -- No --> G[Chọn family dầm theo kích thước]
-  G --> H[Lấy level dầm = _cacLevel[tang+1] hoặc current level]
-  H --> I[Tạo line beam ở z = levelDam.Elevation]
-  I --> J[Tạo beam FamilyInstance trên levelDam]
-  J --> K[Tính offset lên cao trình dầm và áp dụng]
-  K --> L[Set kích thước, vật liệu]
-  L --> M[Đánh dấu dầm đã tạo]
-  M --> N[Next dầm]
+  G --> H[Tạo line beam ở chiều cao dầm]
+  H --> I[Tạo beam FamilyInstance]
+  I --> J[Tính offset lên cao trình dầm và áp dụng]
+  J --> K[Set kích thước, vật liệu]
+  K --> L[Đánh dấu dầm đã tạo]
+  L --> M[Next dầm]
 ```
 
 ## 2.1.4 Lưu đồ thuật toán tạo sàn
@@ -90,13 +86,13 @@ flowchart TD
   A[Start tạo sàn] --> B{ConvertFloors?}
   B -- No --> Z[End]
   B -- Yes --> C[For mỗi tầng]
-  C --> D{ShouldCreateFloor(tang)?}
+  C --> D{Kiểm tra có tạo sàn không?}
   D -- No --> C
   D -- Yes --> E[Lấy boundary cho tầng]
   E --> F{Có boundary?}
   F -- No --> C
   F -- Yes --> G[Tạo CurveLoop từ boundary]
-  G --> H[Floor.Create(doc, loops, floorType.Id, level.Id)]
+  G --> H[Tạo sàn với floorType]
   H --> I[Đánh dấu đã tạo]
   I --> C
   C --> J{Tạo sàn mái?}
