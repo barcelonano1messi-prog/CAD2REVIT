@@ -84,13 +84,13 @@ namespace Cad2Revit.Views
 
             if (cadImport != null)
             {
-                lblCadStatus.Text = "Đã có file CAD import — nhấn Đọc CAD rồi Chuyển đổi.";
+                lblCadStatus.Text = "Đã có file CAD trong dự án!";
                 lblCadStatus.ForeColor = System.Drawing.Color.Green;
                 _canReadCad = true;
             }
             else
             {
-                lblCadStatus.Text = "Chưa import CAD. Dùng Insert → Import CAD trước.";
+                lblCadStatus.Text = "Chưa import CAD nào trong dự án!";
                 lblCadStatus.ForeColor = System.Drawing.Color.Red;
                 _canReadCad = false;
             }
@@ -131,7 +131,7 @@ namespace Cad2Revit.Views
             {
                 if (!_conversionService.ReadCad(out string error))
                 {
-                    lblCadStatus.Text = error ?? "Không đọc được CAD.";
+                    lblCadStatus.Text = error ?? "Không đọc được CAD!";
                     lblCadStatus.ForeColor = System.Drawing.Color.Red;
                     _canConvert = false;
                     _canApplyLayer = false;
@@ -152,7 +152,7 @@ namespace Cad2Revit.Views
                 _canReadCad = true;
                 UpdateButtonStates();
 
-                lblCadStatus.Text = "Đã đọc CAD thành công. Có thể áp dụng layer hoặc chuyển đổi.";
+                lblCadStatus.Text = "Đã đọc CAD thành công!";
                 lblCadStatus.ForeColor = System.Drawing.Color.Green;
             }
             catch (Exception ex)
@@ -432,7 +432,6 @@ namespace Cad2Revit.Views
             }
             catch
             {
-                // bỏ qua nếu view không hỗ trợ zoom
             }
         }
     }
