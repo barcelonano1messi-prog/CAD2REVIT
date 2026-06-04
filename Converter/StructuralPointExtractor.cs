@@ -91,15 +91,14 @@ namespace Cad2Revit.Converter
                     });
                 }
             }
-            return LocTrungDam(doan);
+            return LocTrungDam(GopDuongDamKeTiep(LoaiBoDamSongSongTrung(doan)));
         }
 
         private static List<DuongDam> LoaiBoDamSongSongTrung(List<DuongDam> ds)
         {
-            if (ds.Count < 2)
+            if (ds == null || ds.Count < 2)
                 return ds;
 
-            double tolFeet = UnitHelper.MmSangFeet(KhoangDamKepMm);
             var xoa = new bool[ds.Count];
             var ketQua = new List<DuongDam>();
 
@@ -126,14 +125,17 @@ namespace Cad2Revit.Converter
                         ds[i],
                         ds[j]);
 
+                    double choPhepKm = Math.Max(ds[i].CaoMm, ds[j].CaoMm) * 1.1 + 50;
+                    double tolFeet = UnitHelper.MmSangFeet(choPhepKm);
+
                     if (kc > tolFeet)
                         continue;
 
                     double tiLe = TyLeChongLenNhip(ds[i], ds[j]);
-                    if (tiLe < 0.45)
+                    if (tiLe < 0.25)
                         continue;
 
-                    DuongDam trungDiem = TaoDamTuCapSongSong(ds[i], ds[j]);
+                    DuongDam trungDiem = HopNhatHaiDuongDam(ds[i], ds[j], tolFeet);
                     if (trungDiem != null)
                     {
                         ketQua.Add(trungDiem);
@@ -224,6 +226,130 @@ namespace Cad2Revit.Converter
             return UnitHelper.FeetSangMm(overlap) / daiNgan;
         }
 
+        private static List<DuongDam> GopDuongDamKeTiep(List<DuongDam> ds)
+        {
+            if (ds == null || ds.Count < 2)
+                return ds;
+
+            double tolFeet = UnitHelper.MmSangFeet(100);
+            var ketQua = ds.ToList();
+            bool merged;
+
+            do
+            {
+                merged = false;
+
+                for (int i = 0; i < ketQua.Count && !merged; i++)
+                {
+                    for (int j = i + 1; j < ketQua.Count; j++)
+                    {
+                        if (!CungHuongDam(
+                            ketQua[i].DiemDau,
+                            ketQua[i].DiemCuoi,
+                            ketQua[j]))
+                        {
+                            continue;
+                        }
+
+                        if (Math.Abs(ketQua[i].RongMm - ketQua[j].RongMm) > 20 ||
+                            Math.Abs(ketQua[i].CaoMm - ketQua[j].CaoMm) > 20)
+                        {
+                            continue;
+                        }
+
+                        DuongDam hopNhat = HopNhatHaiDuongDam(
+                            ketQua[i],
+                            ketQua[j],
+                            tolFeet);
+
+                        if (hopNhat == null)
+                            continue;
+
+                        ketQua.RemoveAt(j);
+                        ketQua.RemoveAt(i);
+                        ketQua.Add(hopNhat);
+                        merged = true;
+                        break;
+                    }
+                }
+            }
+            while (merged);
+
+            return ketQua;
+        }
+
+        private static DuongDam HopNhatHaiDuongDam(
+            DuongDam a,
+            DuongDam b,
+            double tolFeet)
+        {
+            if (a == null || b == null)
+                return null;
+
+            XYZ direction = Huong(a.DiemDau, a.DiemCuoi);
+            if (direction == null)
+                return null;
+
+            if (!DuongDamTrenCungMotDuong(a, b, tolFeet))
+                return null;
+
+            XYZ normal = new XYZ(-direction.Y, direction.X, 0);
+            if (normal.GetLength() < 1e-9)
+                return null;
+            normal = normal.Normalize();
+
+            double offsetA = 0;
+            double offsetB1 = (b.DiemDau - a.DiemDau).DotProduct(normal);
+            double offsetB2 = (b.DiemCuoi - a.DiemDau).DotProduct(normal);
+            double offsetB = (offsetB1 + offsetB2) * 0.5;
+            double centerOffset = (offsetA + offsetB) * 0.5;
+            XYZ centerOrigin = a.DiemDau + normal * centerOffset;
+
+            var points = new[] { a.DiemDau, a.DiemCuoi, b.DiemDau, b.DiemCuoi };
+            var projections = points
+                .Select(p => new { Point = p, T = (p - centerOrigin).DotProduct(direction) })
+                .OrderBy(x => x.T)
+                .ToList();
+
+            double minT = projections.First().T;
+            double maxT = projections.Last().T;
+            if (maxT - minT < UnitHelper.MmSangFeet(1))
+                return null;
+
+            double aMin = Math.Min((a.DiemDau - centerOrigin).DotProduct(direction),
+                                   (a.DiemCuoi - centerOrigin).DotProduct(direction));
+            double aMax = Math.Max((a.DiemDau - centerOrigin).DotProduct(direction),
+                                   (a.DiemCuoi - centerOrigin).DotProduct(direction));
+            double bMin = Math.Min((b.DiemDau - centerOrigin).DotProduct(direction),
+                                   (b.DiemCuoi - centerOrigin).DotProduct(direction));
+            double bMax = Math.Max((b.DiemDau - centerOrigin).DotProduct(direction),
+                                   (b.DiemCuoi - centerOrigin).DotProduct(direction));
+
+            double overlap = Math.Min(aMax, bMax) - Math.Max(aMin, bMin);
+            if (overlap < -tolFeet)
+                return null;
+
+            return new DuongDam
+            {
+                DiemDau = centerOrigin + direction * minT,
+                DiemCuoi = centerOrigin + direction * maxT,
+                RongMm = (a.RongMm + b.RongMm) * 0.5,
+                CaoMm = (a.CaoMm + b.CaoMm) * 0.5,
+                TenLayer = a.TenLayer ?? b.TenLayer
+            };
+        }
+
+        private static bool DuongDamTrenCungMotDuong(
+            DuongDam a,
+            DuongDam b,
+            double tolFeet)
+        {
+            return KhoangCachDiemLenDuong(b.DiemDau, a.DiemDau, a.DiemCuoi) <= tolFeet &&
+                   KhoangCachDiemLenDuong(b.DiemCuoi, a.DiemDau, a.DiemCuoi) <= tolFeet &&
+                   KhoangCachDiemLenDuong(a.DiemDau, b.DiemDau, b.DiemCuoi) <= tolFeet &&
+                   KhoangCachDiemLenDuong(a.DiemCuoi, b.DiemDau, b.DiemCuoi) <= tolFeet;
+        }
+
         private static List<DuongDam> LocTrungDam(List<DuongDam> ds)
         {
             var ketQua = new List<DuongDam>();
@@ -293,7 +419,7 @@ namespace Cad2Revit.Converter
             if (v1 == null || v2 == null)
                 return false;
 
-            return Math.Abs(v1.DotProduct(v2)) > 0.995;
+            return Math.Abs(v1.DotProduct(v2)) > 0.98;
         }
 
         private static XYZ Huong(XYZ a, XYZ b)

@@ -27,7 +27,6 @@ namespace Cad2Revit.Views
             this.lblBeDaySan = new System.Windows.Forms.Label();
             this.lblMm2b = new System.Windows.Forms.Label();
             this.txtSoTang = new System.Windows.Forms.TextBox();
-            this.chkUseExistingLevels = new System.Windows.Forms.CheckBox();
             this.lblSoTang = new System.Windows.Forms.Label();
             this.lblMm2 = new System.Windows.Forms.Label();
             this.txtChieuCaoTangDienHinh = new System.Windows.Forms.TextBox();
@@ -45,15 +44,6 @@ namespace Cad2Revit.Views
             this.colTenLayer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colLoaiCauKien = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.btnApDungLayer = new System.Windows.Forms.Button();
-            this.grpStats = new System.Windows.Forms.GroupBox();
-            this.lblStatFloor = new System.Windows.Forms.Label();
-            this.lblStatLblFloor = new System.Windows.Forms.Label();
-            this.lblStatBeam = new System.Windows.Forms.Label();
-            this.lblStatLblBeam = new System.Windows.Forms.Label();
-            this.lblStatCol = new System.Windows.Forms.Label();
-            this.lblStatLblCol = new System.Windows.Forms.Label();
-            this.lblStatWall = new System.Windows.Forms.Label();
-            this.lblStatLblWall = new System.Windows.Forms.Label();
             this.btnReadCad = new System.Windows.Forms.Button();
             this.btnConvert = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
@@ -61,7 +51,6 @@ namespace Cad2Revit.Views
             this.grpElements.SuspendLayout();
             this.grpLayerMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLayer)).BeginInit();
-            this.grpStats.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblCadStatus
@@ -84,7 +73,6 @@ namespace Cad2Revit.Views
             this.grpSettings.Controls.Add(this.lblBeDaySan);
             this.grpSettings.Controls.Add(this.lblMm2b);
             this.grpSettings.Controls.Add(this.txtSoTang);
-            this.grpSettings.Controls.Add(this.chkUseExistingLevels);
             this.grpSettings.Controls.Add(this.lblSoTang);
             this.grpSettings.Controls.Add(this.lblMm2);
             this.grpSettings.Controls.Add(this.txtChieuCaoTangDienHinh);
@@ -94,7 +82,7 @@ namespace Cad2Revit.Views
             this.grpSettings.Controls.Add(this.lblChieuCaoTang1);
             this.grpSettings.Location = new System.Drawing.Point(12, 35);
             this.grpSettings.Name = "grpSettings";
-            this.grpSettings.Size = new System.Drawing.Size(390, 230);
+            this.grpSettings.Size = new System.Drawing.Size(390, 190);
             this.grpSettings.TabIndex = 1;
             this.grpSettings.TabStop = false;
             this.grpSettings.Text = "Thông số nhập tay";
@@ -102,7 +90,7 @@ namespace Cad2Revit.Views
             // lblMm6
             // 
             this.lblMm6.AutoSize = true;
-            this.lblMm6.Location = new System.Drawing.Point(241, 136);
+            this.lblMm6.Location = new System.Drawing.Point(241, 110);
             this.lblMm6.Name = "lblMm6";
             this.lblMm6.Size = new System.Drawing.Size(25, 13);
             this.lblMm6.TabIndex = 16;
@@ -110,7 +98,7 @@ namespace Cad2Revit.Views
             // 
             // txtDamCao
             // 
-            this.txtDamCao.Location = new System.Drawing.Point(193, 133);
+            this.txtDamCao.Location = new System.Drawing.Point(193, 107);
             this.txtDamCao.Name = "txtDamCao";
             this.txtDamCao.Size = new System.Drawing.Size(45, 22);
             this.txtDamCao.TabIndex = 15;
@@ -118,7 +106,7 @@ namespace Cad2Revit.Views
             // lblXDam
             // 
             this.lblXDam.AutoSize = true;
-            this.lblXDam.Location = new System.Drawing.Point(178, 136);
+            this.lblXDam.Location = new System.Drawing.Point(178, 110);
             this.lblXDam.Name = "lblXDam";
             this.lblXDam.Size = new System.Drawing.Size(15, 13);
             this.lblXDam.TabIndex = 14;
@@ -126,7 +114,7 @@ namespace Cad2Revit.Views
             // 
             // txtDamRong
             // 
-            this.txtDamRong.Location = new System.Drawing.Point(130, 133);
+            this.txtDamRong.Location = new System.Drawing.Point(130, 107);
             this.txtDamRong.Name = "txtDamRong";
             this.txtDamRong.Size = new System.Drawing.Size(45, 22);
             this.txtDamRong.TabIndex = 13;
@@ -134,7 +122,7 @@ namespace Cad2Revit.Views
             // lblDamSize
             // 
             this.lblDamSize.AutoSize = true;
-            this.lblDamSize.Location = new System.Drawing.Point(8, 136);
+            this.lblDamSize.Location = new System.Drawing.Point(8, 110);
             this.lblDamSize.Name = "lblDamSize";
             this.lblDamSize.Size = new System.Drawing.Size(99, 13);
             this.lblDamSize.TabIndex = 12;
@@ -143,7 +131,7 @@ namespace Cad2Revit.Views
             // lblMm3
             // 
             this.lblMm3.AutoSize = true;
-            this.lblMm3.Location = new System.Drawing.Point(183, 106);
+            this.lblMm3.Location = new System.Drawing.Point(183, 80);
             this.lblMm3.Name = "lblMm3";
             this.lblMm3.Size = new System.Drawing.Size(25, 13);
             this.lblMm3.TabIndex = 11;
@@ -151,7 +139,7 @@ namespace Cad2Revit.Views
             // 
             // txtBeDaySan
             // 
-            this.txtBeDaySan.Location = new System.Drawing.Point(130, 103);
+            this.txtBeDaySan.Location = new System.Drawing.Point(130, 77);
             this.txtBeDaySan.Name = "txtBeDaySan";
             this.txtBeDaySan.Size = new System.Drawing.Size(50, 22);
             this.txtBeDaySan.TabIndex = 10;
@@ -159,7 +147,7 @@ namespace Cad2Revit.Views
             // lblBeDaySan
             // 
             this.lblBeDaySan.AutoSize = true;
-            this.lblBeDaySan.Location = new System.Drawing.Point(8, 106);
+            this.lblBeDaySan.Location = new System.Drawing.Point(8, 80);
             this.lblBeDaySan.Name = "lblBeDaySan";
             this.lblBeDaySan.Size = new System.Drawing.Size(67, 13);
             this.lblBeDaySan.TabIndex = 9;
@@ -180,17 +168,6 @@ namespace Cad2Revit.Views
             this.txtSoTang.Name = "txtSoTang";
             this.txtSoTang.Size = new System.Drawing.Size(50, 22);
             this.txtSoTang.TabIndex = 7;
-            // 
-            // chkUseExistingLevels
-            // 
-            this.chkUseExistingLevels.AutoSize = true;
-            this.chkUseExistingLevels.Location = new System.Drawing.Point(130, 76);
-            this.chkUseExistingLevels.Name = "chkUseExistingLevels";
-            this.chkUseExistingLevels.Size = new System.Drawing.Size(170, 17);
-            this.chkUseExistingLevels.TabIndex = 8;
-            this.chkUseExistingLevels.Text = "Dùng Level Revit có sẵn";
-            this.chkUseExistingLevels.UseVisualStyleBackColor = true;
-            this.chkUseExistingLevels.Visible = false;
             // 
             // lblSoTang
             // 
@@ -316,9 +293,9 @@ namespace Cad2Revit.Views
             // 
             this.grpLayerMap.Controls.Add(this.gridLayer);
             this.grpLayerMap.Controls.Add(this.btnApDungLayer);
-            this.grpLayerMap.Location = new System.Drawing.Point(12, 275);
+            this.grpLayerMap.Location = new System.Drawing.Point(12, 250);
             this.grpLayerMap.Name = "grpLayerMap";
-            this.grpLayerMap.Size = new System.Drawing.Size(816, 220);
+            this.grpLayerMap.Size = new System.Drawing.Size(816, 245);
             this.grpLayerMap.TabIndex = 3;
             this.grpLayerMap.TabStop = false;
             this.grpLayerMap.Text = "Layer CAD";
@@ -334,7 +311,7 @@ namespace Cad2Revit.Views
             this.gridLayer.Location = new System.Drawing.Point(8, 58);
             this.gridLayer.Name = "gridLayer";
             this.gridLayer.RowHeadersVisible = false;
-            this.gridLayer.Size = new System.Drawing.Size(800, 142);
+            this.gridLayer.Size = new System.Drawing.Size(800, 171);
             this.gridLayer.TabIndex = 2;
             // 
             // colTenLayer
@@ -367,110 +344,13 @@ namespace Cad2Revit.Views
             this.btnApDungLayer.UseVisualStyleBackColor = false;
             this.btnApDungLayer.Click += new System.EventHandler(this.btnApDungLayer_Click);
             // 
-            // grpStats
-            // 
-            this.grpStats.Controls.Add(this.lblStatFloor);
-            this.grpStats.Controls.Add(this.lblStatLblFloor);
-            this.grpStats.Controls.Add(this.lblStatBeam);
-            this.grpStats.Controls.Add(this.lblStatLblBeam);
-            this.grpStats.Controls.Add(this.lblStatCol);
-            this.grpStats.Controls.Add(this.lblStatLblCol);
-            this.grpStats.Controls.Add(this.lblStatWall);
-            this.grpStats.Controls.Add(this.lblStatLblWall);
-            this.grpStats.Location = new System.Drawing.Point(12, 505);
-            this.grpStats.Name = "grpStats";
-            this.grpStats.Size = new System.Drawing.Size(816, 46);
-            this.grpStats.TabIndex = 4;
-            this.grpStats.TabStop = false;
-            this.grpStats.Text = "Thống kê";
-            // 
-            // lblStatFloor
-            // 
-            this.lblStatFloor.AutoSize = true;
-            this.lblStatFloor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblStatFloor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(84)))), ((int)(((byte)(166)))));
-            this.lblStatFloor.Location = new System.Drawing.Point(567, 18);
-            this.lblStatFloor.Name = "lblStatFloor";
-            this.lblStatFloor.Size = new System.Drawing.Size(19, 15);
-            this.lblStatFloor.TabIndex = 7;
-            this.lblStatFloor.Text = "—";
-            // 
-            // lblStatLblFloor
-            // 
-            this.lblStatLblFloor.AutoSize = true;
-            this.lblStatLblFloor.Location = new System.Drawing.Point(537, 18);
-            this.lblStatLblFloor.Name = "lblStatLblFloor";
-            this.lblStatLblFloor.Size = new System.Drawing.Size(29, 13);
-            this.lblStatLblFloor.TabIndex = 6;
-            this.lblStatLblFloor.Text = "Sàn:";
-            // 
-            // lblStatBeam
-            // 
-            this.lblStatBeam.AutoSize = true;
-            this.lblStatBeam.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblStatBeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(84)))), ((int)(((byte)(166)))));
-            this.lblStatBeam.Location = new System.Drawing.Point(422, 18);
-            this.lblStatBeam.Name = "lblStatBeam";
-            this.lblStatBeam.Size = new System.Drawing.Size(19, 15);
-            this.lblStatBeam.TabIndex = 5;
-            this.lblStatBeam.Text = "—";
-            // 
-            // lblStatLblBeam
-            // 
-            this.lblStatLblBeam.AutoSize = true;
-            this.lblStatLblBeam.Location = new System.Drawing.Point(387, 18);
-            this.lblStatLblBeam.Name = "lblStatLblBeam";
-            this.lblStatLblBeam.Size = new System.Drawing.Size(33, 13);
-            this.lblStatLblBeam.TabIndex = 4;
-            this.lblStatLblBeam.Text = "Dầm:";
-            // 
-            // lblStatCol
-            // 
-            this.lblStatCol.AutoSize = true;
-            this.lblStatCol.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblStatCol.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(84)))), ((int)(((byte)(166)))));
-            this.lblStatCol.Location = new System.Drawing.Point(272, 18);
-            this.lblStatCol.Name = "lblStatCol";
-            this.lblStatCol.Size = new System.Drawing.Size(19, 15);
-            this.lblStatCol.TabIndex = 3;
-            this.lblStatCol.Text = "—";
-            // 
-            // lblStatLblCol
-            // 
-            this.lblStatLblCol.AutoSize = true;
-            this.lblStatLblCol.Location = new System.Drawing.Point(242, 18);
-            this.lblStatLblCol.Name = "lblStatLblCol";
-            this.lblStatLblCol.Size = new System.Drawing.Size(28, 13);
-            this.lblStatLblCol.TabIndex = 2;
-            this.lblStatLblCol.Text = "Cột:";
-            // 
-            // lblStatWall
-            // 
-            this.lblStatWall.AutoSize = true;
-            this.lblStatWall.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblStatWall.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(84)))), ((int)(((byte)(166)))));
-            this.lblStatWall.Location = new System.Drawing.Point(142, 18);
-            this.lblStatWall.Name = "lblStatWall";
-            this.lblStatWall.Size = new System.Drawing.Size(19, 15);
-            this.lblStatWall.TabIndex = 1;
-            this.lblStatWall.Text = "—";
-            // 
-            // lblStatLblWall
-            // 
-            this.lblStatLblWall.AutoSize = true;
-            this.lblStatLblWall.Location = new System.Drawing.Point(95, 18);
-            this.lblStatLblWall.Name = "lblStatLblWall";
-            this.lblStatLblWall.Size = new System.Drawing.Size(43, 13);
-            this.lblStatLblWall.TabIndex = 0;
-            this.lblStatLblWall.Text = "Tường:";
-            // 
             // btnReadCad
             // 
             this.btnReadCad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(212)))));
             this.btnReadCad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReadCad.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnReadCad.ForeColor = System.Drawing.Color.White;
-            this.btnReadCad.Location = new System.Drawing.Point(12, 565);
+            this.btnReadCad.Location = new System.Drawing.Point(12, 546);
             this.btnReadCad.Name = "btnReadCad";
             this.btnReadCad.Size = new System.Drawing.Size(110, 34);
             this.btnReadCad.TabIndex = 5;
@@ -485,7 +365,7 @@ namespace Cad2Revit.Views
             this.btnConvert.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnConvert.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnConvert.ForeColor = System.Drawing.Color.White;
-            this.btnConvert.Location = new System.Drawing.Point(134, 565);
+            this.btnConvert.Location = new System.Drawing.Point(134, 546);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(190, 34);
             this.btnConvert.TabIndex = 6;
@@ -496,7 +376,7 @@ namespace Cad2Revit.Views
             // btnClose
             // 
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClose.Location = new System.Drawing.Point(760, 565);
+            this.btnClose.Location = new System.Drawing.Point(760, 546);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(64, 34);
             this.btnClose.TabIndex = 8;
@@ -506,23 +386,21 @@ namespace Cad2Revit.Views
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(840, 620);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(844, 621);
             this.Controls.Add(this.lblCadStatus);
             this.Controls.Add(this.grpSettings);
             this.Controls.Add(this.grpElements);
             this.Controls.Add(this.grpLayerMap);
-            this.Controls.Add(this.grpStats);
             this.Controls.Add(this.btnReadCad);
             this.Controls.Add(this.btnConvert);
             this.Controls.Add(this.btnClose);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.MinimumSize = new System.Drawing.Size(860, 660);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(860, 660);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CAD 2D → Revit 3D Converter";
@@ -532,8 +410,6 @@ namespace Cad2Revit.Views
             this.grpElements.PerformLayout();
             this.grpLayerMap.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridLayer)).EndInit();
-            this.grpStats.ResumeLayout(false);
-            this.grpStats.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -550,7 +426,6 @@ namespace Cad2Revit.Views
         private System.Windows.Forms.Label lblMm2;
         private System.Windows.Forms.Label lblSoTang;
         private System.Windows.Forms.TextBox txtSoTang;
-        private System.Windows.Forms.CheckBox chkUseExistingLevels;
         private System.Windows.Forms.Label lblMm2b;
         private System.Windows.Forms.Label lblBeDaySan;
         private System.Windows.Forms.TextBox txtBeDaySan;
@@ -570,15 +445,6 @@ namespace Cad2Revit.Views
         private System.Windows.Forms.DataGridView gridLayer;
         private System.Windows.Forms.DataGridViewTextBoxColumn colTenLayer;
         private System.Windows.Forms.DataGridViewComboBoxColumn colLoaiCauKien;
-        private System.Windows.Forms.GroupBox grpStats;
-        private System.Windows.Forms.Label lblStatLblWall;
-        private System.Windows.Forms.Label lblStatWall;
-        private System.Windows.Forms.Label lblStatLblCol;
-        private System.Windows.Forms.Label lblStatCol;
-        private System.Windows.Forms.Label lblStatLblBeam;
-        private System.Windows.Forms.Label lblStatBeam;
-        private System.Windows.Forms.Label lblStatLblFloor;
-        private System.Windows.Forms.Label lblStatFloor;
         private System.Windows.Forms.Button btnReadCad;
         private System.Windows.Forms.Button btnConvert;
         private System.Windows.Forms.Button btnClose;

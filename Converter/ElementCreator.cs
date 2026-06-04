@@ -19,11 +19,9 @@ namespace Cad2Revit.Converter
         private readonly List<Line> _danhSachTuongDaTao = new List<Line>();
         private readonly HashSet<string> _cotDaTaoTheoTang = new HashSet<string>();
         private readonly HashSet<string> _damDaTaoTheoTang = new HashSet<string>();
-        private readonly HashSet<string> _sanDaTaoTheoTang = new HashSet<string>();
 
         private List<Level> _cacLevel;
         private Level _levelMai;
-        private readonly List<Grid> _gridDaTao = new List<Grid>();
 
         public ElementCreator(
             Document doc,
@@ -73,7 +71,17 @@ namespace Cad2Revit.Converter
                 _cacLevel = TaoHoacLayDanhSachLevel(_caiDat.SoTang);
             }
 
+            // Tách level tầng mái nếu có
             _levelMai = null;
+            if (_cacLevel != null && _cacLevel.Count > 0 && _caiDat.TaoSanMai)
+            {
+                Level levelCuoi = _cacLevel[_cacLevel.Count - 1];
+                if (levelCuoi.Name != null && levelCuoi.Name.Contains("mái"))
+                {
+                    _levelMai = levelCuoi;
+                    _cacLevel.RemoveAt(_cacLevel.Count - 1);
+                }
+            }
 
             if (_cacLevel == null || _cacLevel.Count == 0)
             {
@@ -82,10 +90,11 @@ namespace Cad2Revit.Converter
                     "hoặc tắt SuDungLevelRevitCoSan.";
             }
 
-            _phanTich.SoTang = _cacLevel.Count;
-
             if (_caiDat.TaoSanMai)
                 ChuanBiLevelMai();
+
+            // SoTang trong _phanTich = số tầng nhập
+            _phanTich.SoTang = _caiDat.SoTang;
 
             // BƯỚC 2+3: TẠO LƯỚI TRỤC VÀ SÀN TRƯỚC
             var gridFloorBuilder = new GridFloorBuilder(
@@ -207,29 +216,6 @@ namespace Cad2Revit.Converter
             return null;
         }
 
-        /// <summary>
-        /// Đáy (tầng 0 / Level thấp nhất): không tạo sàn.
-        /// Từ tầng 1 trở lên: mỗi tầng một tấm sàn trong lưới.
-        /// </summary>
-        private bool NenTaoSanChoTang(int tang)
-        {
-            if (_cacLevel == null || tang < 0 || tang >= _cacLevel.Count)
-                return false;
-
-            if (LaTangDay(tang))
-                return false;
-
-            return true;
-        }
-
-        private bool LaTangDay(int tang)
-        {
-            if (_caiDat.BoQuaSanTangTret && tang == 0)
-                return true;
-
-            return false;
-        }
-
         private double LayChieuCaoTangFeet(int tang)
         {
             if (_caiDat.SuDungLevelRevitCoSan &&
@@ -281,21 +267,18 @@ namespace Cad2Revit.Converter
                         _caiDat.LayChieuCaoTang(i - 1));
                 }
 
-                // Tìm Level CAD2Revit đã tạo (ưu tiên)
                 Level level = TimLevelCad2RevitTheoCaoDo(
                     levelsCoSan,
                     caoDo,
                     tolFeet);
 
-                // Nếu không có, tạo mới
                 if (level == null)
                 {
-                    string ten = "Tầng " + (i + 1);
                     level = Level.Create(_doc, caoDo);
-                    DatTenLevel(level, ten);
-                    levelsCoSan.Add(level);
                 }
 
+                string ten = "Tầng " + (i + 1);
+                DatTenLevel(level, ten);
                 ketQua.Add(level);
             }
 
@@ -381,10 +364,7 @@ namespace Cad2Revit.Converter
             int tang,
             double chieuCaoTangFeet)
         {
-            string key =
-                tang + "_" +
-                MaViTri(dc.X, dc.Y) + "_" +
-                dc.RongMm + "x" + dc.SauMm;
+            string key = tang + "_" + MaViTri(dc.X, dc.Y) + "_" + dc.RongMm + "x" + dc.SauMm;
 
             if (_cotDaTaoTheoTang.Contains(key))
                 return false;
@@ -442,7 +422,6 @@ namespace Cad2Revit.Converter
             }
             catch
             {
-                // bỏ qua
             }
         }
 
@@ -633,33 +612,7 @@ namespace Cad2Revit.Converter
             }
             catch
             {
-                // bỏ qua
             }
-        }
-
-        private int TaoSanChoTang(int tang, Level level)
-        {
-            List<XYZ> DuongVien = LayDuongVienSanChoTang(tang);
-            if (DuongVien == null || DuongVien.Count < 3)
-                return 0;
-
-            string key = tang + "_" + MaVung(DuongVien);
-            if (_sanDaTaoTheoTang.Contains(key))
-                return 0;
-
-            if (TaoSanTuDuongVien(
-                DuongVien,
-                _caiDat.BeDaySanMm,
-                level.Elevation,
-                level.Id,
-                false,
-                _phanTich.DanhSachLoThung))
-            {
-                _sanDaTaoTheoTang.Add(key);
-                return 1;
-            }
-
-            return 0;
         }
 
         private List<XYZ> LayDuongVienSanChoTang(int tang)
@@ -679,45 +632,6 @@ namespace Cad2Revit.Converter
             return vung?.DuongVien;
         }
 
-        private int TaoSanMai()
-        {
-            if (_cacLevel.Count == 0)
-                return 0;
-
-            VungSan vung = LayVungSanLonNhat();
-            if (vung == null)
-            {
-                return 0;
-            }
-
-            if (_levelMai == null)
-                ChuanBiLevelMai();
-
-            if (_levelMai == null)
-                return 0;
-
-            string key = "MAI_" + MaVung(vung.DuongVien);
-            if (_sanDaTaoTheoTang.Contains(key))
-                return 0;
-
-            List<XYZ> DuongVienMai = LayDuongVienSanChoTang(_cacLevel.Count - 1)
-                ?? vung.DuongVien;
-
-            if (TaoSanTuDuongVien(
-                DuongVienMai,
-                _caiDat.BeDaySanMm,
-                _levelMai.Elevation,
-                _levelMai.Id,
-                true,
-                _phanTich.DanhSachLoThung))
-            {
-                _sanDaTaoTheoTang.Add(key);
-                return 1;
-            }
-
-            return 0;
-        }
-
         private VungSan LayVungSanLonNhat()
         {
             if (_phanTich.LuoiTruc?.DuongVienSan != null &&
@@ -727,7 +641,7 @@ namespace Cad2Revit.Converter
                 {
                     DuongVien = _phanTich.LuoiTruc.DuongVienSan,
                     BeDayMm = _caiDat.BeDaySanMm,
-                    TenLayer = "CAD2Revit-Luoi"
+                    TenLayer = "Luoi"
                 };
             }
 
@@ -886,83 +800,6 @@ namespace Cad2Revit.Converter
             }
         }
 
-        private bool TaoSanTuDuongVien(
-            List<XYZ> DuongVien,
-            double beDayMm,
-            double elevationFeet,
-            ElementId levelId,
-            bool laSanMai,
-            List<List<XYZ>> loThungs = null)
-        {
-            try
-            {
-                if (DuongVien == null || DuongVien.Count < 3)
-                    return false;
-
-                FloorType loaiSan = _tcvn.TimFloorTypeTcvn(beDayMm, laSanMai);
-                if (loaiSan == null)
-                    return false;
-
-                CurveLoop loopNgoai = TaoCurveLoop(DuongVien, elevationFeet);
-                if (loopNgoai == null)
-                    return false;
-
-                var loops = new List<CurveLoop> { loopNgoai };
-
-                if (loThungs != null)
-                {
-                    foreach (var loThung in loThungs)
-                    {
-                        if (loThung == null || loThung.Count < 3)
-                            continue;
-
-                        CurveLoop loopTrong = TaoCurveLoop(loThung, elevationFeet);
-                        if (loopTrong != null)
-                            loops.Add(loopTrong);
-                    }
-                }
-
-                Floor san = Floor.Create(
-                    _doc,
-                    loops,
-                    loaiSan.Id,
-                    levelId);
-
-                if (san == null)
-                    return false;
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        private static CurveLoop TaoCurveLoop(
-            List<XYZ> DuongVien,
-            double elevationFeet)
-        {
-            var curves = new List<Curve>();
-            for (int i = 0; i < DuongVien.Count; i++)
-            {
-                XYZ a = ChieuLenCaoDo(DuongVien[i], elevationFeet);
-                XYZ b = ChieuLenCaoDo(
-                    DuongVien[(i + 1) % DuongVien.Count],
-                    elevationFeet);
-
-                if (a.DistanceTo(b) < UnitHelper.MmSangFeet(50))
-                    continue;
-
-                curves.Add(Line.CreateBound(a, b));
-            }
-
-            if (curves.Count < 3)
-                return null;
-
-            return CurveLoop.Create(curves);
-        }
-
         private static XYZ ChieuLenLevel(XYZ p, double elevationFeet)
         {
             return ChieuLenCaoDo(p, elevationFeet);
@@ -1020,8 +857,6 @@ namespace Cad2Revit.Converter
 
         private static void LamThangDuong(ref XYZ p1, ref XYZ p2)
         {
-            // Giữ nguyên hướng dầm/tường gần với bản vẽ hơn.
-            // Chỉ cố định đường thẳng nếu thực sự nằm ngang hoặc dọc gần như tuyệt đối.
             double tol = UnitHelper.MmSangFeet(1);
             double dx = Math.Abs(p2.X - p1.X);
             double dy = Math.Abs(p2.Y - p1.Y);
@@ -1056,20 +891,6 @@ namespace Cad2Revit.Converter
             }
 
             return x1 + "," + y1 + "," + x2 + "," + y2;
-        }
-
-        private static string MaVung(List<XYZ> DuongVien)
-        {
-            if (DuongVien == null || DuongVien.Count == 0)
-                return "";
-
-            double minX = DuongVien.Min(p => p.X);
-            double maxX = DuongVien.Max(p => p.X);
-            double minY = DuongVien.Min(p => p.Y);
-            double maxY = DuongVien.Max(p => p.Y);
-
-            return Math.Round(minX) + "_" + Math.Round(minY) + "_" +
-                   Math.Round(maxX) + "_" + Math.Round(maxY);
         }
 
         private static double DienTichVung(List<XYZ> DuongVien)

@@ -22,74 +22,39 @@ namespace Cad2Revit.Helpers
             double tolFeet = UnitHelper.MmSangFeet(TolCaoDoMm);
 
             var levelsRevit = LayLevelRevitCoSan(doc);
+            if (levelsRevit.Count == 0)
+                return new List<Level>();
+
+            double elevationBase = levelsRevit[0].Elevation;
+            CapNhatCaoDoLevelCoSan(levelsRevit, caiDat, elevationBase, tolFeet);
+
             var ketQua = new List<Level>();
-            var daDungId = new HashSet<long>();
-
-            Level tang1 = TimLevelTheoTenTang(levelsRevit, 1);
-            double elevationBase = tang1?.Elevation ?? 0;
-
-            if (tang1 != null)
-            {
-                CapNhatCaoDoLevelCoSan(levelsRevit, caiDat, elevationBase, tolFeet);
-            }
-
             for (int i = 0; i < soTang; i++)
             {
-                double caoDoMucTieu = TinhCaoDoMucTieu(
-                    caiDat,
-                    i,
-                    levelsRevit,
-                    elevationBase);
-
+                double targetElevation = TinhCaoDoNhap(caiDat, i, elevationBase);
                 Level level = TimLevelTheoTenTang(levelsRevit, i + 1);
 
                 if (level == null)
                 {
-                    level = TimLevelTheoCaoDo(
-                        levelsRevit,
-                        caoDoMucTieu,
-                        tolFeet);
-                }
-
-                if (level != null && daDungId.Contains(level.Id.Value))
-                {
-                    level = null;
-                }
-
-                if (level != null &&
-                    Math.Abs(level.Elevation - caoDoMucTieu) > tolFeet)
-                {
-                    level = null;
+                    level = TimLevelTheoCaoDo(levelsRevit, targetElevation, tolFeet);
                 }
 
                 if (level == null)
                 {
-                    level = TimLevelTheoCaoDo(
-                        levelsRevit,
-                        caoDoMucTieu,
-                        tolFeet);
-
-                    if (level == null || daDungId.Contains(level.Id.Value))
-                    {
-                        level = Level.Create(doc, caoDoMucTieu);
-                        string ten = "Tầng " + (i + 1);
-                        DatTenLevel(level, ten);
-                        levelsRevit.Add(level);
-                        levelsRevit.Sort((a, b) =>
-                            a.Elevation.CompareTo(b.Elevation));
-                    }
+                    level = Level.Create(doc, targetElevation);
+                    levelsRevit.Add(level);
                 }
 
-                if (level == null)
-                {
-                    continue;
-                }
+                string tenTang = "Tầng " + (i + 1);
+                DatTenLevel(level, tenTang);
 
-                daDungId.Add(level.Id.Value);
-                ketQua.Add(level);
+                if (!ketQua.Contains(level))
+                    ketQua.Add(level);
             }
 
-            return ketQua;
+            return ketQua
+                .OrderBy(l => l.Elevation)
+                .ToList();
         }
 
         public static Level LayLevelMai(

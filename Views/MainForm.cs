@@ -66,11 +66,6 @@ namespace Cad2Revit.Views
             chkColumns.Checked = true;
             chkBeams.Checked = true;
             chkFloors.Checked = true;
-
-            lblStatWall.Text = "0";
-            lblStatCol.Text = "0";
-            lblStatBeam.Text = "0";
-            lblStatFloor.Text = "0";
         }
 
         private void UpdateCadImportStatus()
@@ -135,7 +130,6 @@ namespace Cad2Revit.Views
                     lblCadStatus.ForeColor = System.Drawing.Color.Red;
                     _canConvert = false;
                     _canApplyLayer = false;
-                    UpdateStatistics();
                     UpdateButtonStates();
                     return;
                 }
@@ -210,9 +204,8 @@ namespace Cad2Revit.Views
                 return;
             }
 
-            string thongSoTuDong = GetThongSoTuDong(settings);
             DialogResult xacNhan = MessageBox.Show(
-                "Tạo mô hình 3D?\n\n" + thongSoTuDong,
+                "Tạo mô hình 3D?\n\n",
                 "Xác nhận",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
@@ -289,73 +282,6 @@ namespace Cad2Revit.Views
             _conversionService.Analyse(settings);
             _phanTich = _conversionService.AnalysisResult;
             _ketQuaCAD = _conversionService.CadResult;
-            UpdateStatistics();
-        }
-
-        private void UpdateStatistics()
-        {
-            int soTuong = 0;
-            int soCot = 0;
-            int soDam = 0;
-            int soSan = 0;
-            int soKhac = 0;
-
-            if (_phanTich != null)
-            {
-                soCot = _phanTich.DanhSachDiemCot?.Count ?? 0;
-                soDam = _phanTich.DanhSachDuongDam?.Count ?? 0;
-                soSan = _phanTich.DanhSachVungSan?.Count ?? 0;
-            }
-            else if (_ketQuaCAD != null)
-            {
-                foreach (CadLine duong in _ketQuaCAD.DanhSachDuong)
-                {
-                    switch (duong.Loai)
-                    {
-                        case LoaiCauKien.Tuong:
-                            soTuong++;
-                            break;
-                        case LoaiCauKien.Cot:
-                            soCot++;
-                            break;
-                        case LoaiCauKien.Dam:
-                            soDam++;
-                            break;
-                        case LoaiCauKien.San:
-                            soSan++;
-                            break;
-                        default:
-                            soKhac++;
-                            break;
-                    }
-                }
-            }
-
-            lblStatWall.Text = soTuong.ToString();
-            lblStatCol.Text = soCot.ToString();
-            lblStatBeam.Text = soDam.ToString();
-            lblStatFloor.Text = soSan.ToString();
-        }
-
-        private string GetThongSoTuDong(ConversionSettings settings)
-        {
-            if (_ketQuaCAD == null)
-                return string.Empty;
-
-            int soVung = _phanTich.DanhSachVungSan?.Count ?? 0;
-            int soCot = _phanTich.DanhSachDiemCot?.Count ?? 0;
-            int soDam = _phanTich.DanhSachDuongDam?.Count ?? 0;
-
-            string toaDo = string.Format(
-                "Gốc CAD: X={0:F1}m Y={1:F1}m | ",
-                UnitHelper.FeetSangMm(_ketQuaCAD.GocX) / 1000.0,
-                UnitHelper.FeetSangMm(_ketQuaCAD.GocY) / 1000.0);
-
-            return toaDo + "TCVN B25 | Cột: " + soCot +
-                " | Dầm: " + soDam + " nhịp (" +
-                settings.DamRongMm + "×" + settings.DamCaoMm +
-                " mm nhập tay)\r\nSàn " + Math.Round(settings.BeDaySanMm) +
-                " mm | Vùng: " + soVung;
         }
 
         private ConversionSettings CreateConversionSettings()
